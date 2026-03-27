@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Cache-Control" content="no-store" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+  <title>晋中信息学院｜学生端｜公告中心</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@600;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/student.css?v=20260324-notice-1" />
+</head>
+<body class="page-hidden">
+  <div class="auth-checking" id="authChecking">正在校验登录状态…</div>
+  <div class="noise" aria-hidden="true"></div>
+
+  <header class="hero">
+    <div>
+      <p class="badge">公告中心</p>
+      <h1>查看已发布公告</h1>
+      <p class="subtitle">当前用户：<span data-student-user>-</span></p>
+    </div>
+    <div class="hero-actions student-page-nav">
+      <a href="/student" class="btn" data-student-nav>预约首页</a>
+      <a href="/student/notices" class="btn" data-student-nav>公告中心</a>
+      <a href="/student/notifications" class="btn" data-student-nav>通知中心</a>
+      <button class="btn btn-primary" data-student-refresh>刷新页面</button>
+      <button class="btn" data-student-logout>退出登录</button>
+    </div>
+  </header>
+
+  <main class="grid">
+    <section class="card wide-card">
+      <div class="section-head">
+        <h2>筛选条件</h2>
+        <button id="loadNoticeListBtn" class="btn">刷新公告</button>
+      </div>
+      <div class="form-grid">
+        <label>
+          <span>门店筛选</span>
+          <select id="noticeStoreFilter"></select>
+        </label>
+      </div>
+    </section>
+
+    <section class="card notice-list-card">
+      <div class="section-head">
+        <h2>公告列表</h2>
+        <span id="noticeListMeta" class="meta">暂无公告</span>
+      </div>
+      <div id="noticeList" class="notice-list">
+        <div class="notification-empty">暂无公告</div>
+      </div>
+    </section>
+
+    <section class="card notice-detail-card">
+      <div class="notice-detail-head">
+        <div>
+          <p class="badge">公告详情</p>
+          <h2 id="noticeDetailTitle">请选择公告</h2>
+        </div>
+        <span id="noticeDetailStore" class="meta">-</span>
+      </div>
+      <div id="noticeDetailMeta" class="notice-meta"></div>
+      <div id="noticeDetailBody" class="detail-empty">请在左侧选择一条已发布公告查看详情。</div>
+    </section>
+  </main>
+
+  <script src="/static/js/texts.js?v=20260324-notice-1"></script>
+  <script src="/static/js/student-page-common.js?v=20260324-notice-1"></script>
+  <script src="/static/js/student-notices.js?v=20260324-notice-1"></script>
+</body>
+</html>

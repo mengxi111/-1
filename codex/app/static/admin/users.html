@@ -1,0 +1,192 @@
+﻿<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Cache-Control" content="no-store" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+  <title>晋中信息学院｜管理后台｜用户管理</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@500;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/ui.css?v=20260324-notice-1" />
+</head>
+<body class="page-hidden admin-body" data-page="users">
+  <div class="auth-checking" id="authChecking">正在校验登录状态…</div>
+  <div class="noise" aria-hidden="true"></div>
+  <div class="admin-shell">
+    <aside class="admin-sidebar">
+      <div class="admin-brand">
+        <p class="badge">晋中信息学院</p>
+        <h1>自习室管理后台</h1>
+        
+      </div>
+      <nav class="admin-menu">
+        <a href="/admin/dashboard" data-admin-nav="dashboard">仪表盘</a>
+        <a href="/admin/stores" data-admin-nav="stores">门店管理</a>
+        <a href="/admin/resources" data-admin-nav="resources">资源中心</a>
+        <a href="/admin/orders" data-admin-nav="orders">订单管理</a>
+        <a href="/admin/users" data-admin-nav="users">用户管理</a>
+        <a href="/admin/notices" data-admin-nav="notices">公告管理</a>
+        <a href="/admin/config" data-admin-nav="config">系统配置</a>
+        <a href="/admin/logs" data-admin-nav="logs">日志中心</a>
+      </nav>
+    </aside>
+
+    <div class="admin-main">
+      <header class="admin-topbar">
+        <div>
+          <p class="badge">用户管理</p>
+          <h2 class="admin-page-title">用户筛选与预约联动</h2>
+          
+        </div>
+        <div class="admin-top-actions">
+          <div class="admin-user-chip">当前用户：<strong id="currentUserText">-</strong></div>
+          <div class="admin-user-chip">当前角色：<strong id="currentRoleText">-</strong></div>
+          <button id="refreshPageBtn" class="btn btn-primary">刷新页面</button>
+          <button id="logoutBtn" class="btn">退出登录</button>
+        </div>
+      </header>
+
+      <main class="admin-content">
+        <section class="page-card">
+          <div class="section-title"><h2>筛选条件</h2></div>
+          <div class="form-grid two">
+            <label>
+              <span>昵称</span>
+              <input id="userNameInput" type="text" placeholder="请输入昵称" />
+            </label>
+            <label>
+              <span>手机号</span>
+              <input id="userPhoneInput" type="text" placeholder="请输入手机号" />
+            </label>
+            <label>
+              <span>角色</span>
+              <select id="userRoleSelect">
+                <option value="">全部角色</option>
+                <option value="student">学生</option>
+                <option value="staff">店员</option>
+                <option value="admin">管理员</option>
+                <option value="super_admin">超级管理员</option>
+              </select>
+            </label>
+            <label>
+              <span>状态</span>
+              <select id="userStatusSelect">
+                <option value="">全部状态</option>
+                <option value="1">正常</option>
+                <option value="0">冻结</option>
+                <option value="-1">已删除</option>
+              </select>
+            </label>
+            <label>
+              <span>注册开始时间</span>
+              <input id="userCreatedFromInput" type="datetime-local" />
+            </label>
+            <label>
+              <span>注册结束时间</span>
+              <input id="userCreatedToInput" type="datetime-local" />
+            </label>
+          </div>
+          <div class="hero-actions" style="margin-top:14px;">
+            <button id="searchUsersBtn" class="btn btn-primary">搜索用户</button>
+            <button id="resetUsersBtn" class="btn">重置筛选</button>
+            <button id="loadUsersBtn" class="btn">刷新列表</button>
+          </div>
+        </section>
+
+        <section class="page-card">
+          <div class="section-title"><h2>用户列表</h2><span id="userListMeta" class="hint">暂无用户数据</span></div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>用户编号</th>
+                  <th>昵称</th>
+                  <th>手机号</th>
+                  <th>邮箱</th>
+                  <th>角色</th>
+                  <th>状态</th>
+                  <th>爽约次数</th>
+                  <th>黑名单状态</th>
+                  <th>历史预约数</th>
+                  <th>注册时间</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+              <tbody id="userTbody"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="page-card">
+          <div class="section-title"><h2>用户预约记录</h2><span id="userBookingsMeta" class="hint">请先选择用户</span></div>
+          <div class="hero-actions" style="margin-bottom:12px;">
+            <button id="reloadUserBookingsBtn" class="btn">刷新预约记录</button>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>预约编号</th>
+                  <th>门店</th>
+                  <th>座位</th>
+                  <th>开始时间</th>
+                  <th>结束时间</th>
+                  <th>状态</th>
+                </tr>
+              </thead>
+              <tbody id="userBookingsTbody"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="page-card compact">
+          <h2>操作反馈</h2>
+          <div id="pageFeedback" class="result result-info">暂无操作结果</div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <dialog id="userDetailDialog" class="detail-dialog">
+    <div class="dialog-head">
+      <h2>用户详情</h2>
+      <button id="closeUserDetailBtn" class="btn">关闭</button>
+    </div>
+    <div id="userDetailContent" class="dialog-grid"></div>
+    <div id="assignRolePanel" class="page-card compact hidden" style="margin-top:14px;">
+      <div class="section-title">
+        <h2>权限分配</h2>
+        <span class="hint">仅超级管理员可操作</span>
+      </div>
+      <div class="form-grid two">
+        <label>
+          <span>目标角色</span>
+          <select id="assignUserRoleSelect">
+            <option value="student">学生</option>
+            <option value="staff">店员</option>
+            <option value="admin">管理员</option>
+            <option value="super_admin">超级管理员</option>
+          </select>
+        </label>
+      </div>
+      <p class="hint" style="margin-top:10px;">权限说明：店员可查看订单与签到；管理员可管理门店、座位、订单、用户和公告；超级管理员可继续分配权限。</p>
+      <div class="hero-actions" style="margin-top:14px;">
+        <button id="assignUserRoleBtn" class="btn btn-primary">保存权限</button>
+      </div>
+    </div>
+    <div class="hero-actions" style="margin-top:14px;">
+      <button id="viewUserBookingsBtn" class="btn">查看预约</button>
+      <button id="toggleUserBlacklistBtn" class="btn btn-primary">加入黑名单</button>
+    </div>
+  </dialog>
+
+  <script src="/static/js/texts.js?v=20260324-notice-1"></script>
+  <script src="/static/js/admin-common.js?v=20260324-notice-1"></script>
+  <script src="/static/js/admin/admin-modules.js?v=20260324-notice-1"></script>
+  <script src="/static/js/admin/admin-users.js?v=20260324-4"></script>
+</body>
+</html>
+

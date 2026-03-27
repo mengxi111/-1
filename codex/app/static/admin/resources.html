@@ -1,0 +1,227 @@
+﻿<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Cache-Control" content="no-store" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+  <title>晋中信息学院｜管理后台｜资源中心</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@500;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/ui.css?v=20260324-notice-1" />
+</head>
+<body class="page-hidden admin-body" data-page="resources">
+  <div class="auth-checking" id="authChecking">正在校验登录状态…</div>
+  <div class="noise" aria-hidden="true"></div>
+  <div class="admin-shell">
+    <aside class="admin-sidebar">
+      <div class="admin-brand">
+        <p class="badge">晋中信息学院</p>
+        <h1>自习室管理后台</h1>
+        
+      </div>
+      <nav class="admin-menu">
+        <a href="/admin/dashboard" data-admin-nav="dashboard">仪表盘</a>
+        <a href="/admin/stores" data-admin-nav="stores">门店管理</a>
+        <a href="/admin/resources" data-admin-nav="resources">资源中心</a>
+        <a href="/admin/orders" data-admin-nav="orders">订单管理</a>
+        <a href="/admin/users" data-admin-nav="users">用户管理</a>
+        <a href="/admin/notices" data-admin-nav="notices">公告管理</a>
+        <a href="/admin/config" data-admin-nav="config">系统配置</a>
+        <a href="/admin/logs" data-admin-nav="logs">日志中心</a>
+      </nav>
+    </aside>
+
+    <div class="admin-main">
+      <header class="admin-topbar">
+        <div>
+          <p class="badge">资源中心</p>
+          <h2 class="admin-page-title">基础资源数据</h2>
+          
+        </div>
+        <div class="admin-top-actions">
+          <div class="admin-user-chip">当前用户：<strong id="currentUserText">-</strong></div>
+          <div class="admin-user-chip">当前角色：<strong id="currentRoleText">-</strong></div>
+          <button id="refreshPageBtn" class="btn btn-primary">刷新页面</button>
+          <button id="logoutBtn" class="btn">退出登录</button>
+        </div>
+      </header>
+
+      <main class="admin-content">
+        <section class="page-grid-2 equal">
+          <section class="page-card">
+            <div class="section-title">
+              <h2>座位增减</h2>
+              <p class="page-subtitle">管理员可新增单个座位，或按座位编号删除座位。</p>
+            </div>
+            <div class="form-grid two">
+              <label>
+                <span>所属门店</span>
+                <select id="seatManageStoreId"></select>
+              </label>
+              <label>
+                <span>所属区域</span>
+                <select id="seatManageAreaId"></select>
+              </label>
+              <label>
+                <span>座位编号</span>
+                <input id="seatManageNoInput" type="text" placeholder="例如 A021" />
+              </label>
+              <label>
+                <span>座位类型</span>
+                <select id="seatManageTypeSelect">
+                  <option value="normal">普通座</option>
+                  <option value="silent">静音座</option>
+                  <option value="booth">隔间座</option>
+                  <option value="vip">贵宾座</option>
+                </select>
+              </label>
+              <label>
+                <span>座位状态</span>
+                <select id="seatManageStatusSelect">
+                  <option value="available">可用</option>
+                  <option value="maintenance">维修</option>
+                  <option value="disabled">禁用</option>
+                </select>
+              </label>
+            </div>
+            <div class="hero-actions" style="margin-top:14px;">
+              <button id="createSeatBtn" class="btn btn-primary">新增座位</button>
+            </div>
+            <hr style="margin:18px 0;border:none;border-top:1px solid rgba(125,74,55,.15);" />
+            <div class="form-grid two">
+              <label>
+                <span>删除座位编号</span>
+                <input id="deleteSeatIdInput" type="number" min="1" placeholder="请输入座位 ID" />
+              </label>
+            </div>
+            <div class="hero-actions" style="margin-top:14px;">
+              <button id="deleteSeatBtn" class="btn">删除座位</button>
+            </div>
+          </section>
+
+          <section class="page-card">
+            <div class="section-title">
+              <h2>代学生预约</h2>
+              <p class="page-subtitle">管理员可帮助学生创建预约、强制签到和取消预约。</p>
+            </div>
+            <div class="form-grid two">
+              <label>
+                <span>学生编号</span>
+                <input id="bookingAssistUserIdInput" type="number" min="1" placeholder="请输入学生 ID" />
+              </label>
+              <label>
+                <span>座位编号</span>
+                <input id="bookingAssistSeatIdInput" type="number" min="1" placeholder="请输入座位 ID" />
+              </label>
+              <label>
+                <span>开始时间</span>
+                <input id="bookingAssistStartInput" type="datetime-local" />
+              </label>
+              <label>
+                <span>结束时间</span>
+                <input id="bookingAssistEndInput" type="datetime-local" />
+              </label>
+            </div>
+            <div class="hero-actions" style="margin-top:14px;">
+              <button id="createAdminBookingBtn" class="btn btn-primary">创建预约</button>
+            </div>
+          </section>
+        </section>
+
+        <section class="page-card">
+          <div class="section-title">
+            <h2>预约处理</h2>
+            <p class="page-subtitle">可按门店、状态和学生编号筛选，并执行签到、取消、完成操作。</p>
+          </div>
+          <div class="form-grid two">
+            <label>
+              <span>门店筛选</span>
+              <select id="adminBookingStoreId"></select>
+            </label>
+            <label>
+              <span>预约状态</span>
+              <select id="adminBookingStatusSelect">
+                <option value="">全部状态</option>
+                <option value="booked">已预约</option>
+                <option value="checked_in">已签到</option>
+                <option value="completed">已完成</option>
+                <option value="cancelled">已取消</option>
+                <option value="expired">已过期</option>
+              </select>
+            </label>
+            <label class="full-span">
+              <span>学生编号筛选</span>
+              <input id="adminBookingUserIdInput" type="number" min="1" placeholder="请输入学生 ID，可选" />
+            </label>
+          </div>
+          <div class="hero-actions" style="margin-top:14px;">
+            <button id="loadAdminBookingsBtn" class="btn btn-primary">加载预约列表</button>
+          </div>
+          <div class="table-wrap" style="margin-top:14px;">
+            <table>
+              <thead>
+                <tr>
+                  <th>预约编号</th>
+                  <th>学生编号</th>
+                  <th>门店编号</th>
+                  <th>座位</th>
+                  <th>状态</th>
+                  <th>开始时间</th>
+                  <th>结束时间</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+              <tbody id="adminBookingTbody"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="page-card">
+          <div class="section-title"><h2>资源筛选</h2></div>
+          <div class="form-grid two">
+            <label>
+              <span>数据类型</span>
+              <select id="resourceType"></select>
+            </label>
+            <label>
+              <span>门店筛选</span>
+              <select id="resourceStoreId"></select>
+            </label>
+            <label class="full-span">
+              <span>状态筛选（可选）</span>
+              <input id="resourceStatusInput" type="text" placeholder="例如 booked / active / published" />
+            </label>
+          </div>
+          <div class="hero-actions" style="margin-top:14px;">
+            <button id="loadResourceBtn" class="btn btn-primary">加载数据</button>
+          </div>
+        </section>
+
+        <section class="page-card">
+          <div class="section-title"><h2>资源列表</h2></div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr id="resourceTableHeadRow"></tr></thead>
+              <tbody id="resourceTableBody"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="page-card compact">
+          <h2>操作反馈</h2>
+          <div id="pageFeedback" class="result result-info">暂无操作结果</div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <script src="/static/js/texts.js?v=20260324-notice-1"></script>
+  <script src="/static/js/admin-common.js?v=20260324-notice-1"></script>
+  <script src="/static/js/admin/admin-modules.js?v=20260324-notice-1"></script>
+  <script src="/static/js/admin/admin-resources.js?v=20260324-1"></script>
+</body>
+</html>
+

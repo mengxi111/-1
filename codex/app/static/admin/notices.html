@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Cache-Control" content="no-store" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+  <title>晋中信息学院｜管理后台｜公告管理</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@500;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/ui.css?v=20260324-notice-1" />
+</head>
+<body class="page-hidden admin-body" data-page="notices">
+  <div class="auth-checking" id="authChecking">正在校验登录状态…</div>
+  <div class="noise" aria-hidden="true"></div>
+  <div class="admin-shell">
+    <aside class="admin-sidebar">
+      <div class="admin-brand">
+        <p class="badge">晋中信息学院</p>
+        <h1>自习室管理后台</h1>
+      </div>
+      <nav class="admin-menu">
+        <a href="/admin/dashboard" data-admin-nav="dashboard">仪表盘</a>
+        <a href="/admin/stores" data-admin-nav="stores">门店管理</a>
+        <a href="/admin/resources" data-admin-nav="resources">资源中心</a>
+        <a href="/admin/orders" data-admin-nav="orders">订单管理</a>
+        <a href="/admin/users" data-admin-nav="users">用户管理</a>
+        <a href="/admin/notices" data-admin-nav="notices">公告管理</a>
+        <a href="/admin/config" data-admin-nav="config">系统配置</a>
+        <a href="/admin/logs" data-admin-nav="logs">日志中心</a>
+      </nav>
+    </aside>
+
+    <div class="admin-main">
+      <header class="admin-topbar">
+        <div>
+          <p class="badge">公告管理</p>
+          <h2 class="admin-page-title">公告发布与通知管理</h2>
+        </div>
+        <div class="admin-top-actions">
+          <div class="admin-user-chip">当前用户：<strong id="currentUserText">-</strong></div>
+          <div class="admin-user-chip">当前角色：<strong id="currentRoleText">-</strong></div>
+          <button id="refreshPageBtn" class="btn btn-primary">刷新页面</button>
+          <button id="logoutBtn" class="btn">退出登录</button>
+        </div>
+      </header>
+
+      <main class="admin-content">
+        <section class="page-card">
+          <div class="section-title"><h2>筛选条件</h2></div>
+          <div class="form-grid two">
+            <label>
+              <span>门店筛选</span>
+              <select id="noticeFilterStoreId"></select>
+            </label>
+            <label>
+              <span>公告状态</span>
+              <select id="noticeFilterStatus">
+                <option value="">全部状态</option>
+                <option value="draft">草稿</option>
+                <option value="published">已发布</option>
+                <option value="offline">已下线</option>
+              </select>
+            </label>
+          </div>
+          <div class="hero-actions" style="margin-top:14px;">
+            <button id="searchNoticesBtn" class="btn btn-primary">查询公告</button>
+            <button id="resetNoticesBtn" class="btn">重置筛选</button>
+            <button id="loadNoticesBtn" class="btn">刷新列表</button>
+          </div>
+        </section>
+
+        <section class="page-grid-2 equal">
+          <section class="page-card">
+            <div class="section-title"><h2>公告列表</h2><span id="noticeListMeta" class="hint">暂无公告数据</span></div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>编号</th>
+                    <th>门店</th>
+                    <th>标题</th>
+                    <th>状态</th>
+                    <th>发布时间</th>
+                    <th>操作</th>
+                  </tr>
+                </thead>
+                <tbody id="noticeTableBody"></tbody>
+              </table>
+            </div>
+          </section>
+
+          <section class="page-card">
+            <div class="section-title">
+              <h2 id="noticeEditorTitle">新增公告</h2>
+              <span id="noticeEditorMode" class="hint">未选择公告时默认新建</span>
+            </div>
+            <div class="form-grid">
+              <label>
+                <span>所属门店</span>
+                <select id="noticeStoreId"></select>
+              </label>
+              <label>
+                <span>公告标题</span>
+                <input id="noticeTitleInput" type="text" maxlength="200" placeholder="请输入公告标题" />
+              </label>
+              <label>
+                <span>公告状态</span>
+                <select id="noticeStatusSelect">
+                  <option value="draft">草稿</option>
+                  <option value="published">已发布</option>
+                  <option value="offline">已下线</option>
+                </select>
+              </label>
+              <label>
+                <span>公告内容</span>
+                <textarea id="noticeContentInput" rows="10" placeholder="请输入公告正文内容"></textarea>
+              </label>
+            </div>
+            <div class="hero-actions" style="margin-top:14px;">
+              <button id="saveNoticeBtn" class="btn btn-primary">保存公告</button>
+              <button id="resetNoticeFormBtn" class="btn">清空表单</button>
+            </div>
+          </section>
+        </section>
+
+        <section class="page-card compact">
+          <h2>操作反馈</h2>
+          <div id="pageFeedback" class="result result-info">暂无操作结果</div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <dialog id="noticeDetailDialog" class="detail-dialog">
+    <div class="dialog-head">
+      <h2>公告详情</h2>
+      <button id="closeNoticeDetailBtn" class="btn">关闭</button>
+    </div>
+    <div id="noticeDetailContent" class="dialog-grid"></div>
+    <div class="hero-actions" style="margin-top:14px;">
+      <button id="editNoticeFromDetailBtn" class="btn">编辑公告</button>
+      <button id="publishNoticeFromDetailBtn" class="btn btn-primary">发布公告</button>
+      <button id="offlineNoticeFromDetailBtn" class="btn">下线公告</button>
+      <button id="deleteNoticeFromDetailBtn" class="btn">删除公告</button>
+    </div>
+  </dialog>
+
+  <script src="/static/js/texts.js?v=20260324-notice-1"></script>
+  <script src="/static/js/admin-common.js?v=20260324-notice-1"></script>
+  <script src="/static/js/admin/admin-notices.js?v=20260324-notice-1"></script>
+</body>
+</html>

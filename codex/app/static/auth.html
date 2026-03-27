@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Cache-Control" content="no-store" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+  <title data-text="auth.pageTitle">晋中信息学院｜自习室预约</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@600;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/auth.css?v=20260310-1" />
+</head>
+<body>
+  <main class="auth-shell">
+    <section class="brand">
+      <p class="tag" data-text="auth.brandTag">晋中信息学院</p>
+      <h1 data-text="auth.brandTitle">自习室预约</h1>
+      <p data-text="auth.brandDesc">请先登录或注册，进入晋中信息学院自习室预约系统。</p>
+    </section>
+
+    <section class="panel">
+      <div class="tabs">
+        <button id="tabLogin" class="tab active" data-text="auth.tabLogin">登录</button>
+        <button id="tabRegister" class="tab" data-text="auth.tabRegister">注册</button>
+      </div>
+
+      <form id="loginForm" class="form active">
+        <label>
+          <span data-text="auth.accountLabel">手机号或邮箱</span>
+          <input id="loginPhone" maxlength="255" data-placeholder="auth.accountPlaceholder" />
+        </label>
+        <label>
+          <span data-text="auth.passwordLabel">密码</span>
+          <input id="loginPassword" type="password" minlength="6" data-placeholder="auth.passwordPlaceholder" />
+        </label>
+        <button type="submit" class="btn primary" data-text="auth.loginSubmit">登录并进入</button>
+      </form>
+
+      <form id="registerForm" class="form">
+        <label>
+          <span data-text="auth.nameLabel">昵称</span>
+          <input id="registerName" maxlength="50" data-placeholder="auth.namePlaceholder" />
+        </label>
+        <label>
+          <span data-text="auth.phoneLabel">手机号</span>
+          <input id="registerPhone" maxlength="20" data-placeholder="auth.phonePlaceholder" />
+        </label>
+        <label>
+          <span data-text="auth.emailLabel">邮箱（可选）</span>
+          <input id="registerEmail" maxlength="255" data-placeholder="auth.emailPlaceholder" />
+        </label>
+        <label>
+          <span data-text="auth.passwordLabel">密码</span>
+          <input id="registerPassword" type="password" minlength="6" data-placeholder="auth.passwordPlaceholder" />
+        </label>
+        <button type="submit" class="btn primary" data-text="auth.registerSubmit">注册并进入</button>
+      </form>
+
+      <pre id="authOutput" class="output"></pre>
+    </section>
+  </main>
+
+  <script src="/static/js/texts.js?v=20260318-4"></script>
+  <script src="/static/js/auth.js?v=20260318-4"></script>
+</body>
+</html>

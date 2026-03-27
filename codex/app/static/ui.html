@@ -1,0 +1,529 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Cache-Control" content="no-store" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+  <title data-text="admin.pageTitle">晋中信息学院｜管理后台</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@500;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/ui.css?v=20260318-9" />
+</head>
+<body class="page-hidden">
+  <div class="auth-checking" id="authChecking" data-text="common.checkingAuth">正在校验登录状态…</div>
+  <div class="noise" aria-hidden="true"></div>
+
+  <header class="hero">
+    <div>
+      <p class="badge" data-text="admin.badge">晋中信息学院</p>
+      <h1 data-text="admin.topTitle">自习室管理后台</h1>
+    </div>
+    <div class="hero-actions">
+      <button id="refreshAllBtn" class="btn btn-primary" data-text="admin.refreshAll">刷新全部</button>
+      <button id="logoutBtn" class="btn" data-text="admin.logout">退出登录</button>
+    </div>
+  </header>
+
+  <nav class="page-nav">
+    <a class="nav-link" href="#dashboard" data-text="admin.navDashboard">仪表盘</a>
+    <a class="nav-link" href="#stores" data-text="admin.navStores">门店管理</a>
+    <a class="nav-link" href="#orders" data-text="admin.navOrders">订单管理</a>
+    <a class="nav-link" href="#users" data-text="admin.navUsers">用户管理</a>
+    <a class="nav-link" href="#config" data-text="admin.navConfig">系统配置</a>
+    <a class="nav-link" href="#logs" data-text="admin.navLogs">日志中心</a>
+  </nav>
+
+  <main class="grid admin-grid">
+    <section id="dashboard" class="card session-card">
+      <h2 data-text="admin.sectionSession">会话信息</h2>
+      <div class="form-grid">
+        <label>
+          <span data-text="admin.currentUser">当前用户</span>
+          <input id="currentUserText" readonly />
+        </label>
+        <label>
+          <span data-text="admin.currentRole">当前角色</span>
+          <input id="currentRoleText" readonly />
+        </label>
+        <label>
+          <span data-text="admin.statsDate">统计日期</span>
+          <input id="statsDate" type="date" />
+        </label>
+      </div>
+    </section>
+
+    <section id="stores" class="card store-card">
+      <div class="section-head">
+        <h2 data-text="admin.sectionStore">门店视图</h2>
+        <div class="hero-actions">
+          <button id="loadStoresBtn" class="btn" data-text="admin.loadStores">加载门店</button>
+          <button id="toggleStoreEditBtn" class="btn" data-text="admin.editStore">编辑门店</button>
+        </div>
+      </div>
+      <label class="block">
+        <span data-text="admin.storeLabel">当前门店</span>
+        <select id="storeId"></select>
+      </label>
+      <div id="storeSummaryBanner" class="store-summary-banner" data-text="admin.storeInfoAll">当前为全部门店视图</div>
+      <div id="storeViewMode" class="store-mode-panel">
+        <div class="store-detail-card">
+          <div class="store-detail-head">
+            <strong id="storeDetailName" data-text="admin.storeInfoAll">当前为全部门店视图</strong>
+            <span id="storeDetailHours" class="store-hours">-</span>
+          </div>
+          <p id="storeDetailDescription" class="store-detail-description" data-text="admin.storeDescriptionEmpty">未选择具体门店时，将展示汇总信息。</p>
+          <dl class="store-detail-meta">
+            <div>
+              <dt data-text="admin.storeAddress">地址</dt>
+              <dd id="storeDetailAddress">-</dd>
+            </div>
+            <div>
+              <dt data-text="admin.storePhone">工作人员联系方式</dt>
+              <dd id="storeDetailPhone">-</dd>
+            </div>
+            <div>
+              <dt data-text="admin.storeStatus">门店状态</dt>
+              <dd id="storeDetailStatus">-</dd>
+            </div>
+            <div>
+              <dt data-text="admin.storeHours">营业时间</dt>
+              <dd id="storeDetailHoursText">-</dd>
+            </div>
+          </dl>
+        </div>
+      </div>
+      <div id="storeEditMode" class="store-mode-panel hidden">
+        <div class="form-grid two">
+          <label class="full-span">
+            <span data-text="admin.storeDescriptionEdit">门店简介</span>
+            <textarea id="storeDescriptionInput" rows="3" data-placeholder="admin.storeDescriptionPlaceholder"></textarea>
+          </label>
+          <label class="full-span">
+            <span data-text="admin.storeAddressEdit">地址</span>
+            <input id="storeAddressInput" type="text" data-placeholder="admin.storeAddressPlaceholder" />
+          </label>
+          <label>
+            <span data-text="admin.storePhoneEdit">工作人员联系方式</span>
+            <input id="storePhoneInput" type="text" data-placeholder="admin.storePhonePlaceholder" />
+          </label>
+          <label>
+            <span data-text="admin.storeStatusEdit">门店状态</span>
+            <select id="storeStatusInput">
+              <option value="1" data-text="admin.storeStatusOpen">营业中</option>
+              <option value="0" data-text="admin.storeStatusClosed">已停用</option>
+            </select>
+          </label>
+          <label>
+            <span data-text="admin.storeOpenTime">开始营业时间</span>
+            <input id="storeOpenTimeInput" type="time" />
+          </label>
+          <label>
+            <span data-text="admin.storeCloseTime">结束营业时间</span>
+            <input id="storeCloseTimeInput" type="time" />
+          </label>
+        </div>
+        <div class="hero-actions">
+          <button id="cancelStoreEditBtn" class="btn" data-text="common.cancel">取消</button>
+          <button id="saveStoreInfoBtn" class="btn btn-primary" data-text="admin.saveStoreInfo">保存门店信息</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="card stats-panel">
+      <div class="section-title">
+        <h2 data-text="admin.sectionOverview">今日概览</h2>
+        <button id="loadStatsBtn" class="btn" data-text="admin.loadStats">加载统计</button>
+      </div>
+      <div class="cards cards-three">
+        <article class="metric">
+          <span class="label" data-text="admin.todayBookingCount">今日预约数</span>
+          <strong id="metricBookingCount">0</strong>
+        </article>
+        <article class="metric">
+          <span class="label" data-text="admin.todayCheckinCount">今日签到数</span>
+          <strong id="metricCheckinCount">0</strong>
+        </article>
+        <article class="metric">
+          <span class="label" data-text="admin.todayRevenue">今日收入</span>
+          <strong id="metricRevenue">0</strong>
+        </article>
+        <article class="metric">
+          <span class="label" data-text="admin.currentOccupancyRate">当前上座率</span>
+          <strong id="metricOccupancyRate">0%</strong>
+        </article>
+        <article class="metric">
+          <span class="label" data-text="admin.todayNoShowCount">今日爽约数</span>
+          <strong id="metricNoShowCount">0</strong>
+        </article>
+        <article class="metric">
+          <span class="label" data-text="admin.currentIdleSeatCount">当前空闲座位数</span>
+          <strong id="metricIdleSeatCount">0</strong>
+        </article>
+      </div>
+      <div class="trend-wrap">
+        <h3 data-text="admin.hourlyTrend">按小时上座趋势</h3>
+        <div id="trendBars" class="trend-bars"></div>
+      </div>
+      <div class="chart-wrap">
+        <h3 data-text="admin.recent7DayTrend">最近7天预约趋势</h3>
+        <div id="sevenDayTrendChart" class="chart-box"></div>
+      </div>
+      <div class="chart-wrap">
+        <h3 data-text="admin.hotSeatRank">热门座位排行</h3>
+        <div id="hotSeatChart" class="chart-box"></div>
+      </div>
+    </section>
+
+    <section class="card checkin-panel">
+      <div class="section-title">
+        <h2 data-text="admin.sectionCheckinStats">签到率统计</h2>
+        <button id="loadCheckinStatsBtn" class="btn" data-text="admin.loadCheckinStats">加载签到统计</button>
+      </div>
+      <div class="cards checkin-cards">
+        <article class="metric">
+          <span class="label" data-text="admin.todayReservations">今日预约数</span>
+          <strong id="metricTotalReservations">0</strong>
+        </article>
+        <article class="metric">
+          <span class="label" data-text="admin.todayCheckins">今日签到数</span>
+          <strong id="metricCheckedInCount">0</strong>
+        </article>
+        <article class="metric">
+          <span class="label" data-text="admin.todayMissedCheckins">今日爽约数</span>
+          <strong id="metricMissedCheckins">0</strong>
+        </article>
+        <article class="metric">
+          <span class="label" data-text="admin.todayCheckinRate">今日签到率</span>
+          <strong id="metricCheckinRate">0%</strong>
+        </article>
+      </div>
+      <div class="chart-wrap">
+        <h3 data-text="admin.checkinChartTitle">按小时签到率趋势</h3>
+        <div id="checkinRateChart" class="chart-box"></div>
+      </div>
+    </section>
+
+    <section class="card list-panel">
+      <div class="section-title">
+        <h2 data-text="admin.sectionResourceCenter">数据管理台</h2>
+        <div class="hero-actions">
+          <button id="bootstrapBtn" class="btn" data-text="admin.bootstrapData">初始化种子数据</button>
+          <button id="bootstrapDemoBtn" class="btn" data-text="admin.bootstrapDemoData">初始化演示数据</button>
+          <button id="loadResourceBtn" class="btn" data-text="admin.loadResource">加载数据</button>
+        </div>
+      </div>
+      <div class="form-grid two">
+        <label>
+          <span data-text="admin.resourceTypeLabel">数据类型</span>
+          <select id="resourceType"></select>
+        </label>
+        <label>
+          <span data-text="admin.resourceStatusLabel">状态筛选</span>
+          <input id="resourceStatusInput" type="text" data-placeholder="admin.resourceStatusPlaceholder" />
+        </label>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr id="resourceTableHeadRow"></tr>
+          </thead>
+          <tbody id="resourceTableBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="orders" class="card list-panel">
+      <div class="section-title">
+        <h2 data-text="admin.sectionOrderList">订单列表</h2>
+        <div class="hero-actions">
+          <button id="loadOrdersBtn" class="btn" data-text="admin.refreshList">刷新列表</button>
+          <button id="exportOrdersBtn" class="btn" data-text="admin.exportOrders">导出订单</button>
+        </div>
+      </div>
+      <div class="form-grid two">
+        <label>
+          <span data-text="admin.orderFilterStatus">订单状态</span>
+          <select id="orderStatusSelect">
+            <option value="" data-text="admin.filterAll">全部</option>
+            <option value="pending" data-text="status.pending">待支付</option>
+            <option value="paid" data-text="status.paid">已支付</option>
+            <option value="cancelled" data-text="status.cancelled">已取消</option>
+            <option value="refunded" data-text="status.refunded">已退款</option>
+          </select>
+        </label>
+        <label>
+          <span data-text="admin.orderFilterStore">门店筛选</span>
+          <select id="orderStoreIdSelect"></select>
+        </label>
+        <label>
+          <span data-text="admin.orderFilterKeyword">用户编号/手机号</span>
+          <input id="orderKeywordInput" type="text" data-placeholder="admin.orderFilterKeywordPlaceholder" />
+        </label>
+        <label>
+          <span data-text="admin.orderFilterDateFrom">开始时间</span>
+          <input id="orderDateFromInput" type="datetime-local" />
+        </label>
+        <label>
+          <span data-text="admin.orderFilterDateTo">结束时间</span>
+          <input id="orderDateToInput" type="datetime-local" />
+        </label>
+        <label>
+          <span data-text="admin.orderFilterAction">筛选操作</span>
+          <div class="hero-actions">
+            <button id="searchOrdersBtn" class="btn" type="button" data-text="admin.searchOrders">查询订单</button>
+            <button id="resetOrdersBtn" class="btn" type="button" data-text="admin.resetOrders">重置筛选</button>
+          </div>
+        </label>
+      </div>
+      <p id="orderListMeta" class="hint" data-text="admin.orderListMetaDefault">当前展示全部订单</p>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th data-text="admin.orderTableId">订单编号</th>
+              <th data-text="admin.orderTableStore">门店</th>
+              <th data-text="admin.orderTableSeat">座位</th>
+              <th data-text="admin.orderTableUser">用户</th>
+              <th data-text="admin.orderTableAmount">金额</th>
+              <th data-text="admin.orderTableStatus">状态</th>
+              <th data-text="admin.orderTableCreatedAt">创建时间</th>
+              <th data-text="admin.orderTableAction">操作</th>
+            </tr>
+          </thead>
+          <tbody id="orderTbody"></tbody>
+        </table>
+      </div>
+      <div id="orderDetailBox" class="detail-box empty" data-text="admin.orderDetailDefault">点击“查看详情”可查看订单信息</div>
+    </section>
+
+    <section id="users" class="card list-panel">
+      <div class="section-title">
+        <div>
+          <h2 data-text="admin.sectionUserList">注册用户信息</h2>
+          <p id="userListMeta" class="hint" data-text="admin.userListMetaDefault">点击按钮加载全部注册用户信息</p>
+        </div>
+        <div class="hero-actions">
+          <button id="loadUsersBtn" class="btn" data-text="admin.loadUsers">加载用户信息</button>
+        </div>
+      </div>
+      <div class="form-grid two">
+        <label>
+          <span data-text="admin.userFilterName">昵称</span>
+          <input id="userNameInput" type="text" data-placeholder="admin.userFilterNamePlaceholder" />
+        </label>
+        <label>
+          <span data-text="admin.userFilterPhone">手机号</span>
+          <input id="userPhoneInput" type="text" data-placeholder="admin.userFilterPhonePlaceholder" />
+        </label>
+        <label>
+          <span data-text="admin.userFilterRole">角色</span>
+          <select id="userRoleSelect">
+            <option value="" data-text="admin.filterAll">全部</option>
+            <option value="student">学生</option>
+            <option value="staff" data-text="admin.roleStaff">店员</option>
+            <option value="admin" data-text="admin.roleAdmin">管理员</option>
+            <option value="super_admin" data-text="admin.roleSuperAdmin">超级管理员</option>
+          </select>
+        </label>
+        <label>
+          <span data-text="admin.userFilterStatus">状态</span>
+          <select id="userStatusSelect">
+            <option value="" data-text="admin.filterAll">全部</option>
+            <option value="1" data-text="admin.userStatusActive">正常</option>
+            <option value="0" data-text="admin.userStatusDisabled">冻结</option>
+            <option value="-1" data-text="admin.userStatusDeleted">已删除</option>
+          </select>
+        </label>
+        <label>
+          <span data-text="admin.userFilterDateFrom">注册开始时间</span>
+          <input id="userCreatedFromInput" type="datetime-local" />
+        </label>
+        <label>
+          <span data-text="admin.userFilterDateTo">注册结束时间</span>
+          <input id="userCreatedToInput" type="datetime-local" />
+        </label>
+      </div>
+      <div class="hero-actions">
+        <button id="searchUsersBtn" class="btn" type="button" data-text="admin.searchUsers">搜索用户</button>
+        <button id="resetUsersBtn" class="btn" type="button" data-text="admin.resetUsers">重置筛选</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th data-text="admin.userTableId">用户编号</th>
+              <th data-text="admin.userTableName">昵称</th>
+              <th data-text="admin.userTablePhone">手机号</th>
+              <th data-text="admin.userTableEmail">邮箱</th>
+              <th data-text="admin.userTableRole">角色</th>
+              <th data-text="admin.userTableStatus">状态</th>
+              <th data-text="admin.userTableNoShow">爽约次数</th>
+              <th data-text="admin.userTableBlacklist">黑名单</th>
+              <th data-text="admin.userTableBookingCount">历史预约数</th>
+              <th data-text="admin.userTableCreatedAt">注册时间</th>
+              <th data-text="admin.userTableAction">操作</th>
+            </tr>
+          </thead>
+          <tbody id="userTbody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="card list-panel">
+      <div class="section-title">
+        <div>
+          <h2 data-text="admin.sectionUserBookings">用户预约记录</h2>
+          <p id="userBookingsMeta" class="hint" data-text="admin.userBookingsMetaDefault">点击用户列表中的“查看预约”查看该用户预约记录</p>
+        </div>
+        <button id="reloadUserBookingsBtn" class="btn" type="button" data-text="admin.reloadUserBookings">刷新预约记录</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th data-text="admin.userBookingTableId">预约编号</th>
+              <th data-text="admin.userBookingTableStore">门店</th>
+              <th data-text="admin.userBookingTableSeat">座位</th>
+              <th data-text="admin.userBookingTableStart">开始时间</th>
+              <th data-text="admin.userBookingTableEnd">结束时间</th>
+              <th data-text="admin.userBookingTableStatus">状态</th>
+            </tr>
+          </thead>
+          <tbody id="userBookingsTbody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="config" class="card system-config-panel">
+      <div class="section-title">
+        <h2 data-text="admin.sectionSystemConfig">系统配置</h2>
+        <div class="hero-actions">
+          <button id="loadSystemConfigBtn" class="btn" data-text="admin.loadSystemConfig">加载配置</button>
+          <button id="resetSystemConfigBtn" class="btn" data-text="admin.resetSystemConfig">恢复默认配置</button>
+          <button id="saveSystemConfigBtn" class="btn btn-primary" data-text="admin.saveSystemConfig">保存配置</button>
+        </div>
+      </div>
+      <div class="form-grid two">
+        <label>
+          <span data-text="admin.minBookingMinutes">最短预约时长（分钟）</span>
+          <input id="cfgMinBookingMinutes" type="number" min="1" />
+        </label>
+        <label>
+          <span data-text="admin.maxBookingHours">最长预约时长（小时）</span>
+          <input id="cfgMaxBookingHours" type="number" min="1" />
+        </label>
+        <label>
+          <span data-text="admin.cancelBeforeMinutes">可取消提前分钟</span>
+          <input id="cfgCancelBeforeMinutes" type="number" min="0" />
+        </label>
+        <label>
+          <span data-text="admin.rescheduleBeforeMinutes">可改期提前分钟</span>
+          <input id="cfgRescheduleBeforeMinutes" type="number" min="0" />
+        </label>
+        <label>
+          <span data-text="admin.checkinGraceMinutes">签到宽限分钟</span>
+          <input id="cfgCheckinGraceMinutes" type="number" min="1" />
+        </label>
+        <label>
+          <span data-text="admin.noShowThreshold">爽约拉黑阈值</span>
+          <input id="cfgNoShowThreshold" type="number" min="1" />
+        </label>
+        <label>
+          <span data-text="admin.blacklistEffectiveDays">黑名单生效天数</span>
+          <input id="cfgBlacklistEffectiveDays" type="number" min="1" />
+        </label>
+        <label>
+          <span data-text="admin.defaultOpenTime">默认营业开始时间</span>
+          <input id="cfgDefaultOpenTime" type="time" />
+        </label>
+        <label>
+          <span data-text="admin.defaultCloseTime">默认营业结束时间</span>
+          <input id="cfgDefaultCloseTime" type="time" />
+        </label>
+      </div>
+    </section>
+
+    <section id="logs" class="card list-panel">
+      <div class="section-title">
+        <h2 data-text="admin.sectionOperationLog">操作日志</h2>
+        <button id="loadOperationLogsBtn" class="btn" data-text="admin.loadOperationLog">查询日志</button>
+      </div>
+      <div class="form-grid two">
+        <label>
+          <span data-text="admin.logModule">模块</span>
+          <input id="logModuleInput" type="text" data-placeholder="admin.logModulePlaceholder" />
+        </label>
+        <label>
+          <span data-text="admin.logOperatorKeyword">管理员</span>
+          <input id="logOperatorKeywordInput" type="text" data-placeholder="admin.logOperatorKeywordPlaceholder" />
+        </label>
+        <label>
+          <span data-text="admin.logMethod">请求方法</span>
+          <select id="logMethodInput">
+            <option value="" data-text="admin.filterAll">全部</option>
+            <option value="GET">GET</option>
+            <option value="POST">POST</option>
+            <option value="PUT">PUT</option>
+            <option value="DELETE">DELETE</option>
+          </select>
+        </label>
+        <label>
+          <span data-text="admin.logStartTime">开始时间</span>
+          <input id="logStartTimeInput" type="datetime-local" />
+        </label>
+        <label>
+          <span data-text="admin.logEndTime">结束时间</span>
+          <input id="logEndTimeInput" type="datetime-local" />
+        </label>
+      </div>
+      <div class="hero-actions">
+        <button id="prevOperationLogsBtn" class="btn" data-text="admin.logPrevPage">上一页</button>
+        <button id="nextOperationLogsBtn" class="btn" data-text="admin.logNextPage">下一页</button>
+        <span id="operationLogPageInfo" class="hint">第 1 页</span>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th data-text="admin.logTableOperator">操作人</th>
+              <th data-text="admin.logTableRole">角色</th>
+              <th data-text="admin.logTableIP">IP</th>
+              <th data-text="admin.logTableModule">模块</th>
+              <th data-text="admin.logTableMethod">方法</th>
+              <th data-text="admin.logTablePath">路径</th>
+              <th data-text="admin.logTableStatusCode">响应码</th>
+              <th data-text="admin.logTableDuration">耗时</th>
+              <th data-text="admin.logTableTime">时间</th>
+            </tr>
+          </thead>
+          <tbody id="operationLogTbody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="card output-panel">
+      <h2 data-text="admin.sectionOutput">操作反馈</h2>
+      <div id="adminOutput" class="result result-info" data-text="admin.outputDefault">暂无操作结果</div>
+    </section>
+  </main>
+
+  <dialog id="userDetailDialog" class="detail-dialog">
+    <div class="dialog-head">
+      <h3 data-text="admin.userDetailTitle">用户详情</h3>
+      <button id="closeUserDetailBtn" class="btn" type="button" data-text="common.close">关闭</button>
+    </div>
+    <div id="userDetailContent" class="dialog-grid"></div>
+    <div class="hero-actions">
+      <button id="toggleUserBlacklistBtn" class="btn" type="button" data-text="admin.userActionBlacklist">加入黑名单</button>
+      <button id="viewUserBookingsBtn" class="btn btn-primary" type="button" data-text="admin.userActionViewBookings">查看预约</button>
+    </div>
+  </dialog>
+
+  <script src="/static/js/texts.js?v=20260318-9"></script>
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+  <script src="/static/js/ui.js?v=20260318-9"></script>
+</body>
+</html>

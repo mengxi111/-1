@@ -1,0 +1,121 @@
+﻿<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Cache-Control" content="no-store" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+  <title>晋中信息学院｜管理后台｜仪表盘</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@500;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/ui.css?v=20260324-notice-1" />
+</head>
+<body class="page-hidden admin-body" data-page="dashboard">
+  <div class="auth-checking" id="authChecking">正在校验登录状态…</div>
+  <div class="noise" aria-hidden="true"></div>
+  <div class="admin-shell">
+    <aside class="admin-sidebar">
+      <div class="admin-brand">
+        <p class="badge">晋中信息学院</p>
+        <h1>自习室管理后台</h1>
+        
+      </div>
+      <nav class="admin-menu">
+        <a href="/admin/dashboard" data-admin-nav="dashboard">仪表盘</a>
+        <a href="/admin/stores" data-admin-nav="stores">门店管理</a>
+        <a href="/admin/resources" data-admin-nav="resources">资源中心</a>
+        <a href="/admin/orders" data-admin-nav="orders">订单管理</a>
+        <a href="/admin/users" data-admin-nav="users">用户管理</a>
+        <a href="/admin/notices" data-admin-nav="notices">公告管理</a>
+        <a href="/admin/config" data-admin-nav="config">系统配置</a>
+        <a href="/admin/logs" data-admin-nav="logs">日志中心</a>
+      </nav>
+    </aside>
+
+    <div class="admin-main">
+      <header class="admin-topbar">
+        <div>
+          <p class="badge">仪表盘</p>
+          <h2 class="admin-page-title">运营概览</h2>
+          
+        </div>
+        <div class="admin-top-actions">
+          <div class="admin-user-chip">当前用户：<strong id="currentUserText">-</strong></div>
+          <div class="admin-user-chip">当前角色：<strong id="currentRoleText">-</strong></div>
+          <button id="refreshPageBtn" class="btn btn-primary">刷新页面</button>
+          <button id="logoutBtn" class="btn">退出登录</button>
+        </div>
+      </header>
+
+      <main class="admin-content">
+        <section class="page-card compact">
+          <div class="form-grid two">
+            <label>
+              <span>统计门店</span>
+              <select id="storeSelect"></select>
+            </label>
+            <label>
+              <span>统计日期</span>
+              <input id="statsDate" type="date" />
+            </label>
+          </div>
+          <div class="hero-actions" style="margin-top:14px;">
+            <button id="loadStatsBtn" class="btn btn-primary">刷新概览</button>
+            <button id="loadCheckinStatsBtn" class="btn">刷新签到统计</button>
+          </div>
+        </section>
+
+        <section class="page-card">
+          <div class="section-title"><h2>今日核心指标</h2></div>
+          <div class="metrics-grid metrics-grid-4">
+            <article class="metric"><span class="label">今日预约数</span><strong id="metricBookingCount">0</strong></article>
+            <article class="metric"><span class="label">今日签到数</span><strong id="metricCheckinCount">0</strong></article>
+            <article class="metric"><span class="label">今日收入</span><strong id="metricRevenue">￥0.00</strong></article>
+            <article class="metric"><span class="label">当前上座率</span><strong id="metricOccupancyRate">0%</strong></article>
+            <article class="metric"><span class="label">今日爽约数</span><strong id="metricNoShowCount">0</strong></article>
+            <article class="metric"><span class="label">当前空闲座位数</span><strong id="metricIdleSeatCount">0</strong></article>
+            <article class="metric"><span class="label">今日签到率</span><strong id="metricCheckinRate">0%</strong></article>
+            <article class="metric"><span class="label">今日未签到数</span><strong id="metricMissedCheckins">0</strong></article>
+          </div>
+        </section>
+
+        <section class="page-grid-2">
+          <section class="page-card">
+            <div class="section-title"><h2>按小时上座趋势</h2></div>
+            <div id="trendBars" class="trend-bars"></div>
+          </section>
+          <section class="page-card">
+            <div class="section-title"><h2>热门座位排行 Top 5</h2></div>
+            <div id="hotSeatChart" class="chart-box"></div>
+          </section>
+        </section>
+
+        <section class="page-grid-2 equal">
+          <section class="page-card">
+            <div class="section-title"><h2>最近 7 天预约与收入趋势</h2></div>
+            <div id="sevenDayTrendChart" class="chart-box"></div>
+          </section>
+          <section class="page-card">
+            <div class="section-title"><h2>按小时签到率趋势</h2></div>
+            <div id="checkinRateChart" class="chart-box"></div>
+          </section>
+        </section>
+
+        <section class="page-card compact">
+          <h2>操作反馈</h2>
+          <div id="pageFeedback" class="result result-info">暂无操作结果</div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <script src="/static/js/texts.js?v=20260324-notice-1"></script>
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+  <script src="/static/js/admin-common.js?v=20260324-notice-1"></script>
+  <script src="/static/js/admin/admin-modules.js?v=20260324-notice-1"></script>
+  <script src="/static/js/admin/admin-dashboard.js?v=20260323-2"></script>
+</body>
+</html>
+

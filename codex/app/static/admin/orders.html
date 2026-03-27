@@ -1,0 +1,132 @@
+﻿<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Cache-Control" content="no-store" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+  <title>晋中信息学院｜管理后台｜订单管理</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@500;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/ui.css?v=20260324-notice-1" />
+</head>
+<body class="page-hidden admin-body" data-page="orders">
+  <div class="auth-checking" id="authChecking">正在校验登录状态…</div>
+  <div class="noise" aria-hidden="true"></div>
+  <div class="admin-shell">
+    <aside class="admin-sidebar">
+      <div class="admin-brand">
+        <p class="badge">晋中信息学院</p>
+        <h1>自习室管理后台</h1>
+        
+      </div>
+      <nav class="admin-menu">
+        <a href="/admin/dashboard" data-admin-nav="dashboard">仪表盘</a>
+        <a href="/admin/stores" data-admin-nav="stores">门店管理</a>
+        <a href="/admin/resources" data-admin-nav="resources">资源中心</a>
+        <a href="/admin/orders" data-admin-nav="orders">订单管理</a>
+        <a href="/admin/users" data-admin-nav="users">用户管理</a>
+        <a href="/admin/notices" data-admin-nav="notices">公告管理</a>
+        <a href="/admin/config" data-admin-nav="config">系统配置</a>
+        <a href="/admin/logs" data-admin-nav="logs">日志中心</a>
+      </nav>
+    </aside>
+
+    <div class="admin-main">
+      <header class="admin-topbar">
+        <div>
+          <p class="badge">订单管理</p>
+          <h2 class="admin-page-title">订单筛选与操作</h2>
+          
+        </div>
+        <div class="admin-top-actions">
+          <div class="admin-user-chip">当前用户：<strong id="currentUserText">-</strong></div>
+          <div class="admin-user-chip">当前角色：<strong id="currentRoleText">-</strong></div>
+          <button id="refreshPageBtn" class="btn btn-primary">刷新页面</button>
+          <button id="logoutBtn" class="btn">退出登录</button>
+        </div>
+      </header>
+
+      <main class="admin-content">
+        <section class="page-card">
+          <div class="section-title"><h2>筛选条件</h2></div>
+          <div class="form-grid two">
+            <label>
+              <span>订单状态</span>
+              <select id="orderStatusSelect">
+                <option value="">全部状态</option>
+                <option value="pending">待支付</option>
+                <option value="paid">已支付</option>
+                <option value="cancelled">已取消</option>
+                <option value="refunded">已退款</option>
+              </select>
+            </label>
+            <label>
+              <span>门店筛选</span>
+              <select id="orderStoreIdSelect"></select>
+            </label>
+            <label>
+              <span>用户编号 / 手机号</span>
+              <input id="orderKeywordInput" type="text" placeholder="请输入用户编号、手机号或昵称" />
+            </label>
+            <label>
+              <span>开始时间</span>
+              <input id="orderDateFromInput" type="datetime-local" />
+            </label>
+            <label>
+              <span>结束时间</span>
+              <input id="orderDateToInput" type="datetime-local" />
+            </label>
+          </div>
+          <div class="hero-actions" style="margin-top:14px;">
+            <button id="searchOrdersBtn" class="btn btn-primary">查询订单</button>
+            <button id="resetOrdersBtn" class="btn">重置筛选</button>
+            <button id="loadOrdersBtn" class="btn">刷新列表</button>
+            <button id="exportOrdersBtn" class="btn">导出当前结果</button>
+          </div>
+        </section>
+
+        <section class="page-grid-2 equal">
+          <section class="page-card">
+            <div class="section-title"><h2>订单列表</h2><span id="orderListMeta" class="hint">暂无订单数据</span></div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>订单编号</th>
+                    <th>门店</th>
+                    <th>座位</th>
+                    <th>用户</th>
+                    <th>金额</th>
+                    <th>状态</th>
+                    <th>创建时间</th>
+                    <th>操作</th>
+                  </tr>
+                </thead>
+                <tbody id="orderTbody"></tbody>
+              </table>
+            </div>
+          </section>
+          <section class="page-card">
+            <div class="section-title"><h2>订单详情</h2></div>
+            <div id="orderDetailBox" class="detail-box empty">点击“查看详情”查看订单信息</div>
+          </section>
+        </section>
+
+        <section class="page-card compact">
+          <h2>操作反馈</h2>
+          <div id="pageFeedback" class="result result-info">暂无操作结果</div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <script src="/static/js/texts.js?v=20260324-notice-1"></script>
+  <script src="/static/js/admin-common.js?v=20260324-notice-1"></script>
+  <script src="/static/js/admin/admin-modules.js?v=20260324-notice-1"></script>
+  <script src="/static/js/admin/admin-orders.js?v=20260323-2"></script>
+</body>
+</html>
+

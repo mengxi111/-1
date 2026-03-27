@@ -1,0 +1,141 @@
+﻿<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Cache-Control" content="no-store" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+  <title>晋中信息学院｜管理后台｜门店管理</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@500;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/ui.css?v=20260324-notice-1" />
+</head>
+<body class="page-hidden admin-body" data-page="stores">
+  <div class="auth-checking" id="authChecking">正在校验登录状态…</div>
+  <div class="noise" aria-hidden="true"></div>
+  <div class="admin-shell">
+    <aside class="admin-sidebar">
+      <div class="admin-brand">
+        <p class="badge">晋中信息学院</p>
+        <h1>自习室管理后台</h1>
+        
+      </div>
+      <nav class="admin-menu">
+        <a href="/admin/dashboard" data-admin-nav="dashboard">仪表盘</a>
+        <a href="/admin/stores" data-admin-nav="stores">门店管理</a>
+        <a href="/admin/resources" data-admin-nav="resources">资源中心</a>
+        <a href="/admin/orders" data-admin-nav="orders">订单管理</a>
+        <a href="/admin/users" data-admin-nav="users">用户管理</a>
+        <a href="/admin/notices" data-admin-nav="notices">公告管理</a>
+        <a href="/admin/config" data-admin-nav="config">系统配置</a>
+        <a href="/admin/logs" data-admin-nav="logs">日志中心</a>
+      </nav>
+    </aside>
+
+    <div class="admin-main">
+      <header class="admin-topbar">
+        <div>
+          <p class="badge">门店管理</p>
+          <h2 class="admin-page-title">门店信息维护</h2>
+          
+        </div>
+        <div class="admin-top-actions">
+          <div class="admin-user-chip">当前用户：<strong id="currentUserText">-</strong></div>
+          <div class="admin-user-chip">当前角色：<strong id="currentRoleText">-</strong></div>
+          <button id="refreshPageBtn" class="btn btn-primary">刷新页面</button>
+          <button id="logoutBtn" class="btn">退出登录</button>
+        </div>
+      </header>
+
+      <main class="admin-content">
+        <section class="page-card compact">
+          <div class="toolbar-row">
+            <div>
+              <h2>门店切换</h2>
+              <p class="page-subtitle">全部门店模式仅展示汇总信息，选择单门店后可编辑。</p>
+            </div>
+            <div class="hero-actions">
+              <button id="loadStoresBtn" class="btn">加载门店</button>
+              <button id="toggleStoreEditBtn" class="btn">编辑门店</button>
+            </div>
+          </div>
+          <label>
+            <span>当前门店</span>
+            <select id="storeId"></select>
+          </label>
+          <div id="storeSummaryBanner" class="store-summary-banner">当前为全部门店视图</div>
+        </section>
+
+        <section class="page-grid-2 equal">
+          <section id="storeViewMode" class="page-card">
+            <div class="section-title"><h2>查看模式</h2></div>
+            <div class="store-detail-card">
+              <div class="store-detail-head">
+                <strong id="storeDetailName">暂无门店信息</strong>
+                <span id="storeDetailHours" class="store-hours">-</span>
+              </div>
+              <p id="storeDetailDescription" class="store-detail-description">暂无门店信息</p>
+              <dl class="store-detail-meta">
+                <div><dt>位置</dt><dd id="storeDetailAddress">-</dd></div>
+                <div><dt>工作人员联系方式</dt><dd id="storeDetailPhone">-</dd></div>
+                <div><dt>门店状态</dt><dd id="storeDetailStatus">-</dd></div>
+                <div><dt>营业时间</dt><dd id="storeDetailHoursText">-</dd></div>
+              </dl>
+            </div>
+          </section>
+
+          <section id="storeEditMode" class="page-card hidden">
+            <div class="section-title"><h2>编辑模式</h2></div>
+            <div class="form-grid two">
+              <label class="full-span">
+                <span>门店简介</span>
+                <textarea id="storeDescriptionInput" rows="4" placeholder="请输入门店简介"></textarea>
+              </label>
+              <label class="full-span">
+                <span>位置</span>
+                <input id="storeAddressInput" type="text" placeholder="请输入门店位置" />
+              </label>
+              <label>
+                <span>工作人员联系方式</span>
+                <input id="storePhoneInput" type="text" placeholder="请输入联系方式" />
+              </label>
+              <label>
+                <span>门店状态</span>
+                <select id="storeStatusInput">
+                  <option value="1">营业中</option>
+                  <option value="0">已停用</option>
+                </select>
+              </label>
+              <label>
+                <span>开始营业时间</span>
+                <input id="storeOpenTimeInput" type="time" />
+              </label>
+              <label>
+                <span>结束营业时间</span>
+                <input id="storeCloseTimeInput" type="time" />
+              </label>
+            </div>
+            <div class="hero-actions" style="margin-top:14px;">
+              <button id="cancelStoreEditBtn" class="btn">取消</button>
+              <button id="saveStoreInfoBtn" class="btn btn-primary">保存门店信息</button>
+            </div>
+          </section>
+        </section>
+
+        <section class="page-card compact">
+          <h2>操作反馈</h2>
+          <div id="pageFeedback" class="result result-info">暂无操作结果</div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <script src="/static/js/texts.js?v=20260324-notice-1"></script>
+  <script src="/static/js/admin-common.js?v=20260324-notice-1"></script>
+  <script src="/static/js/admin/admin-modules.js?v=20260324-notice-1"></script>
+  <script src="/static/js/admin/admin-stores.js?v=20260323-2"></script>
+</body>
+</html>
+

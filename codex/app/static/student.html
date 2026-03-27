@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Cache-Control" content="no-store" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+  <title data-text="student.pageTitle">学生预约</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@600;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/student.css?v=20260324-notice-1" />
+</head>
+<body class="page-hidden">
+  <div class="auth-checking" id="authChecking" data-text="common.checkingAuth">正在校验登录状态…</div>
+  <div class="noise" aria-hidden="true"></div>
+  <header class="hero">
+    <div>
+      <p class="badge" data-text="student.badge">学生预约</p>
+      <h1 data-text="student.heroTitle">自习室预约</h1>
+      <p class="subtitle" data-text="student.heroSubtitle">需要登录，未登录无法操作</p>
+    </div>
+    <div class="hero-actions student-page-nav">
+      <a href="/student" class="btn active">预约首页</a>
+      <a href="/student/notices" class="btn">公告中心</a>
+      <a href="/student/notifications" class="btn">通知中心</a>
+      <button id="refreshBtn" class="btn btn-primary" data-text="student.refresh">??</button>
+      <button id="logoutBtn" class="btn" data-text="student.logout">????</button>
+    </div>
+  </header>
+
+  <main class="grid">
+    <section class="card config-card">
+      <h2 data-text="student.sectionSession">会话信息</h2>
+      <div class="form-grid">
+        <label>
+          <span data-text="student.currentUser">当前用户</span>
+          <input id="currentUserText" readonly />
+        </label>
+      </div>
+      <p class="tip" data-text="student.tipRedirect">未登录会自动跳转到登录页。</p>
+    </section>
+
+    <section class="card store-card">
+      <div class="section-head">
+        <h2 data-text="student.sectionStore">门店</h2>
+        <button id="loadStoresBtn" class="btn" data-text="student.loadStores">加载门店</button>
+      </div>
+      <label class="block">
+        <span data-text="student.storeLabel">门店</span>
+        <select id="storeSelect"></select>
+      </label>
+      <div id="storeDetailCard" class="store-detail-card">
+        <div class="store-detail-head">
+          <strong id="storeDetailName" data-text="student.storeInfoEmpty">请选择门店后查看详情</strong>
+          <span id="storeDetailHours" class="store-hours">-</span>
+        </div>
+        <p id="storeDetailDescription" class="store-detail-description">请选择门店后查看详情</p>
+        <dl class="store-detail-meta">
+          <div>
+            <dt data-text="student.storeAddress">门店地址</dt>
+            <dd id="storeDetailAddress">-</dd>
+          </div>
+          <div>
+            <dt data-text="student.storePhone">工作人员联系方式</dt>
+            <dd id="storeDetailPhone">-</dd>
+          </div>
+          <div>
+            <dt data-text="student.storeHours">营业时间</dt>
+            <dd id="storeDetailHoursText">-</dd>
+          </div>
+        </dl>
+      </div>
+      <button id="loadSeatsBtn" class="btn btn-primary full" data-text="student.loadSeats">加载座位</button>
+    </section>
+
+    <section class="card booking-card">
+      <h2 data-text="student.sectionTimeSlot">时间段</h2>
+      <div class="form-grid">
+        <label>
+          <span data-text="student.startLabel">开始时间</span>
+          <input id="startTime" type="datetime-local" />
+        </label>
+        <label>
+          <span data-text="student.endLabel">结束时间</span>
+          <input id="endTime" type="datetime-local" />
+        </label>
+      </div>
+      <p id="selectedSeatText" class="selected" data-text="student.selectedSeatDefault">未选择座位</p>
+      <section class="slot-panel">
+        <div class="section-head slot-panel-head">
+          <h3 data-text="student.sectionAvailableSlots">今日可用时段</h3>
+          <span id="availableSlotsSummary" class="meta">
+            选择座位后，系统将显示该座位今日可预约时段
+          </span>
+        </div>
+        <div class="slot-date-switch">
+          <span class="slot-date-label" data-text="student.availableSlotsDateLabel">查看日期</span>
+          <div class="slot-date-actions">
+            <button id="slotTodayBtn" class="btn slot-date-btn active" type="button" data-text="student.availableSlotsToday">今天</button>
+            <button id="slotTomorrowBtn" class="btn slot-date-btn" type="button" data-text="student.availableSlotsTomorrow">明天</button>
+          </div>
+        </div>
+        <p class="tip slot-tip" data-text="student.availableSlotsHint">点击下方时段可自动填充开始和结束时间</p>
+        <div id="availableSlots" class="available-slot-list">
+          <div class="slot-empty">选择座位后，系统将显示该座位今日可预约时段</div>
+        </div>
+      </section>
+      <button id="submitBookingBtn" class="btn btn-primary full" data-text="student.submitBooking">提交预约</button>
+      <pre id="bookingOutput" class="output"></pre>
+    </section>
+
+    <section class="card seats-card">
+      <div class="section-head">
+        <h2 data-text="student.sectionSeats">座位列表</h2>
+        <span id="seatCount" class="meta">0</span>
+      </div>
+      <div id="seatGrid" class="seat-grid"></div>
+    </section>
+
+    <section class="card my-bookings-card">
+      <div class="section-head">
+        <h2 data-text="student.sectionMyBookings">我的预约</h2>
+        <button id="loadMyBookingsBtn" class="btn" data-text="student.loadMyBookings">刷新</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th data-text="student.bookingTableId">编号</th>
+              <th data-text="student.bookingTableSeat">座位</th>
+              <th data-text="student.bookingTableStart">开始时间</th>
+              <th data-text="student.bookingTableEnd">结束时间</th>
+              <th data-text="student.bookingTableStatus">状态</th>
+              <th data-text="student.bookingTableAction">操作</th>
+            </tr>
+          </thead>
+          <tbody id="myBookingsBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="card notifications-card">
+      <div class="section-head">
+        <div>
+          <h2 data-text="student.sectionNotifications">通知中心</h2>
+          <p id="notificationMeta" class="meta" data-text="student.notificationsMetaDefault">暂无通知</p>
+        </div>
+        <div class="notification-toolbar">
+          <button id="loadNotificationsBtn" class="btn" data-text="student.loadNotifications">刷新通知</button>
+          <button id="markAllNotificationsBtn" class="btn" data-text="student.markAllNotifications">全部标记已读</button>
+        </div>
+      </div>
+      <div id="notificationList" class="notification-list">
+        <div class="notification-empty" data-text="student.notificationsEmpty">暂无通知</div>
+      </div>
+    </section>
+  </main>
+
+  <script src="/static/js/texts.js?v=20260324-notice-1"></script>
+  <script src="/static/js/student.js?v=20260324-notice-1"></script>
+</body>
+</html>

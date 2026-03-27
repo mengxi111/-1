@@ -1,0 +1,127 @@
+﻿<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Cache-Control" content="no-store" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+  <title>晋中信息学院｜管理后台｜系统配置</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@500;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/ui.css?v=20260324-notice-1" />
+</head>
+<body class="page-hidden admin-body" data-page="config">
+  <div class="auth-checking" id="authChecking">正在校验登录状态…</div>
+  <div class="noise" aria-hidden="true"></div>
+  <div class="admin-shell">
+    <aside class="admin-sidebar">
+      <div class="admin-brand">
+        <p class="badge">晋中信息学院</p>
+        <h1>自习室管理后台</h1>
+        
+      </div>
+      <nav class="admin-menu">
+        <a href="/admin/dashboard" data-admin-nav="dashboard">仪表盘</a>
+        <a href="/admin/stores" data-admin-nav="stores">门店管理</a>
+        <a href="/admin/resources" data-admin-nav="resources">资源中心</a>
+        <a href="/admin/orders" data-admin-nav="orders">订单管理</a>
+        <a href="/admin/users" data-admin-nav="users">用户管理</a>
+        <a href="/admin/notices" data-admin-nav="notices">公告管理</a>
+        <a href="/admin/config" data-admin-nav="config">系统配置</a>
+        <a href="/admin/logs" data-admin-nav="logs">日志中心</a>
+      </nav>
+    </aside>
+
+    <div class="admin-main">
+      <header class="admin-topbar">
+        <div>
+          <p class="badge">系统配置</p>
+          <h2 class="admin-page-title">运营规则配置</h2>
+          
+        </div>
+        <div class="admin-top-actions">
+          <div class="admin-user-chip">当前用户：<strong id="currentUserText">-</strong></div>
+          <div class="admin-user-chip">当前角色：<strong id="currentRoleText">-</strong></div>
+          <button id="refreshPageBtn" class="btn btn-primary">刷新页面</button>
+          <button id="logoutBtn" class="btn">退出登录</button>
+        </div>
+      </header>
+
+      <main class="admin-content">
+        <section class="page-card">
+          <div class="section-title"><h2>预约与风控配置</h2></div>
+          <div class="form-grid two">
+            <label>
+              <span>最短预约时长（分钟）</span>
+              <input id="cfgMinBookingMinutes" type="number" min="1" max="720" />
+            </label>
+            <label>
+              <span>最长预约时长（小时）</span>
+              <input id="cfgMaxBookingHours" type="number" min="1" max="24" />
+            </label>
+            <label>
+              <span>可取消提前分钟</span>
+              <input id="cfgCancelBeforeMinutes" type="number" min="0" max="1440" />
+            </label>
+            <label>
+              <span>可改期提前分钟</span>
+              <input id="cfgRescheduleBeforeMinutes" type="number" min="0" max="1440" />
+            </label>
+            <label>
+              <span>签到宽限分钟</span>
+              <input id="cfgCheckinGraceMinutes" type="number" min="1" max="240" />
+            </label>
+            <label>
+              <span>爽约拉黑阈值</span>
+              <input id="cfgNoShowThreshold" type="number" min="1" max="20" />
+            </label>
+            <label>
+              <span>黑名单生效天数</span>
+              <input id="cfgBlacklistEffectiveDays" type="number" min="1" max="365" />
+            </label>
+            <label>
+              <span>默认营业开始时间</span>
+              <input id="cfgDefaultOpenTime" type="time" />
+            </label>
+            <label>
+              <span>默认营业结束时间</span>
+              <input id="cfgDefaultCloseTime" type="time" />
+            </label>
+          </div>
+          <div class="hero-actions" style="margin-top:14px;">
+            <button id="loadSystemConfigBtn" class="btn">加载配置</button>
+            <button id="saveSystemConfigBtn" class="btn btn-primary">保存配置</button>
+            <button id="resetSystemConfigBtn" class="btn">恢复默认配置</button>
+          </div>
+        </section>
+
+        <section class="page-card compact">
+          <div class="toolbar-row">
+            <div>
+              <h2>演示数据工具</h2>
+              <p class="page-subtitle">用于本地演示和答辩时快速恢复基础数据。</p>
+            </div>
+            <div class="hero-actions">
+              <button id="bootstrapBtn" class="btn">初始化基础数据</button>
+              <button id="bootstrapDemoBtn" class="btn btn-primary">初始化演示数据</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="page-card compact">
+          <h2>操作反馈</h2>
+          <div id="pageFeedback" class="result result-info">暂无操作结果</div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <script src="/static/js/texts.js?v=20260324-notice-1"></script>
+  <script src="/static/js/admin-common.js?v=20260324-notice-1"></script>
+  <script src="/static/js/admin/admin-modules.js?v=20260324-notice-1"></script>
+  <script src="/static/js/admin/admin-config.js?v=20260323-2"></script>
+</body>
+</html>
+
