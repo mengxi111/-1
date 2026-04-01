@@ -156,7 +156,7 @@ docker compose -f docker-compose.local.yml up -d postgres redis
 3. `/admin` 打开后被跳回登录页
 - 账号角色不是 `staff/admin/super_admin`，请使用管理账号登录。
 
-## 毕设亮点（可写入论文）
+## 毕设亮点
 - 预约状态机完整闭环：已预约→已签到→已完成，含取消/过期分支
 - 双重并发保护：Redis 锁 + 数据库排他约束
 - 自动化运营规则：超时过期、自动完成、黑名单自动拉黑
