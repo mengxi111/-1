@@ -13,15 +13,24 @@ const el = {
 };
 
 function setOutput(value) {
-  el.authOutput.textContent = typeof value === "string" ? value : JSON.stringify(value, null, 2);
+  const text = value
+    ? (typeof value === "string" ? value : JSON.stringify(value, null, 2))
+    : "";
+  el.authOutput.textContent = text;
+  el.authOutput.classList.toggle("hidden", !text);
 }
 
 function switchTab(mode) {
   const login = mode === "login";
   el.tabLogin.classList.toggle("active", login);
   el.tabRegister.classList.toggle("active", !login);
+  el.tabLogin.setAttribute("aria-selected", String(login));
+  el.tabRegister.setAttribute("aria-selected", String(!login));
   el.loginForm.classList.toggle("active", login);
   el.registerForm.classList.toggle("active", !login);
+  el.loginForm.hidden = !login;
+  el.registerForm.hidden = login;
+  setOutput("");
 }
 
 function parseApiErrorMessage(status, payload) {
@@ -154,6 +163,5 @@ if (window.ensureAuthPageGuard()) {
   if (window.location.pathname === "/auth/register") {
     switchTab("register");
   }
-  setOutput(window.t("auth.outputInit"));
   bind();
 }

@@ -10,59 +10,261 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@600;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/static/css/auth.css?v=20260310-1" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            display: ["Barlow", "sans-serif"],
+            sans: ["Noto Sans SC", "sans-serif"],
+          },
+          colors: {
+            ink: "#050816",
+            haze: "#0f172a",
+            edge: "rgba(148, 163, 184, 0.18)",
+          },
+          boxShadow: {
+            soft: "0 28px 80px rgba(15, 23, 42, 0.38)",
+          },
+        },
+      },
+    };
+  </script>
+  <style type="text/tailwindcss">
+    @layer base {
+      body {
+        @apply min-h-screen overflow-x-hidden bg-[#050816] font-sans text-white antialiased;
+        background-image:
+          radial-gradient(circle at 15% 18%, rgba(56, 189, 248, 0.22), transparent 26%),
+          radial-gradient(circle at 82% 16%, rgba(168, 85, 247, 0.20), transparent 24%),
+          radial-gradient(circle at 52% 82%, rgba(59, 130, 246, 0.15), transparent 28%),
+          linear-gradient(135deg, #050816 0%, #0f172a 48%, #111827 100%);
+      }
+    }
+
+    @layer components {
+      .fade-up {
+        animation: page-fade 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+      }
+
+      .glass-card {
+        @apply relative overflow-hidden border border-white/10 backdrop-blur-2xl;
+        border-radius: 28px;
+        background: rgba(255, 255, 255, 0.08);
+        box-shadow: 0 28px 80px rgba(15, 23, 42, 0.38);
+      }
+
+      .floating-card {
+        @apply transition-transform duration-500 ease-out transition-shadow duration-500;
+      }
+
+      .floating-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 34px 96px rgba(15, 23, 42, 0.52), 0 0 0 1px rgba(129, 140, 248, 0.22);
+      }
+
+      .auth-tab {
+        @apply relative flex-1 rounded-2xl px-4 py-3 text-sm font-semibold text-slate-300 transition-all duration-300;
+      }
+
+      .auth-tab.active {
+        @apply text-white;
+        background-image: linear-gradient(120deg, #2563eb 0%, #7c3aed 52%, #ec4899 100%);
+        box-shadow: 0 14px 40px rgba(99, 102, 241, 0.34);
+      }
+
+      .auth-form {
+        display: none;
+      }
+
+      .auth-form.active {
+        @apply grid gap-5;
+        animation: form-rise 0.35s ease both;
+      }
+
+      .field-label {
+        @apply mb-2 block text-sm font-medium text-slate-300;
+      }
+
+      .auth-input {
+        @apply w-full border border-white/10 bg-slate-950/55 px-4 py-3 text-white placeholder:text-slate-500 outline-none transition-all duration-300;
+        border-radius: 16px;
+        font-size: 15px;
+      }
+
+      .auth-input:focus {
+        border-color: rgba(129, 140, 248, 0.95);
+        box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.18), 0 0 24px rgba(139, 92, 246, 0.28);
+      }
+
+      .glow-btn {
+        @apply relative flex w-full items-center justify-center overflow-hidden px-5 py-3.5 text-sm font-semibold text-white transition-all duration-500;
+        border-radius: 16px;
+        background-image: linear-gradient(120deg, #2563eb 0%, #7c3aed 52%, #ec4899 100%);
+        background-size: 220% 220%;
+        box-shadow: 0 16px 38px rgba(37, 99, 235, 0.28);
+      }
+
+      .glow-btn::before {
+        content: "";
+        position: absolute;
+        inset: 1px;
+        border-radius: 15px;
+        background: linear-gradient(90deg, rgba(255, 255, 255, 0.26), rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.22));
+        opacity: 0.36;
+        transform: translateX(-100%);
+        transition: transform 0.6s ease, opacity 0.4s ease;
+      }
+
+      .glow-btn:hover {
+        transform: translateY(-2px);
+        background-position: 100% 50%;
+        box-shadow: 0 0 26px rgba(129, 140, 248, 0.42), 0 22px 46px rgba(37, 99, 235, 0.26);
+      }
+
+      .glow-btn:hover::before {
+        opacity: 0.7;
+        transform: translateX(100%);
+      }
+
+      .status-panel {
+        @apply border border-white/10 bg-slate-950/60 p-4 text-xs leading-6 text-sky-100;
+        border-radius: 16px;
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+      }
+    }
+
+    @keyframes page-fade {
+      from {
+        opacity: 0;
+        transform: translateY(18px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes form-rise {
+      from {
+        opacity: 0;
+        transform: translateY(12px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes ambient-float {
+      0%, 100% {
+        transform: translate3d(0, 0, 0);
+      }
+      50% {
+        transform: translate3d(0, -10px, 0);
+      }
+    }
+  </style>
 </head>
 <body>
-  <main class="auth-shell">
-    <section class="brand">
-      <p class="tag" data-text="auth.brandTag">晋中信息学院</p>
-      <h1 data-text="auth.brandTitle">自习室预约</h1>
-      <p data-text="auth.brandDesc">请先登录或注册，进入晋中信息学院自习室预约系统。</p>
-    </section>
+  <div class="pointer-events-none fixed inset-0 overflow-hidden">
+    <div class="absolute -left-24 top-10 h-72 w-72 rounded-full bg-cyan-400/20 blur-3xl"></div>
+    <div class="absolute right-0 top-0 h-80 w-80 rounded-full bg-fuchsia-500/20 blur-3xl"></div>
+    <div class="absolute bottom-0 left-1/3 h-72 w-72 rounded-full bg-blue-600/20 blur-3xl"></div>
+    <div class="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:72px_72px] opacity-25"></div>
+  </div>
 
-    <section class="panel">
-      <div class="tabs">
-        <button id="tabLogin" class="tab active" data-text="auth.tabLogin">登录</button>
-        <button id="tabRegister" class="tab" data-text="auth.tabRegister">注册</button>
-      </div>
+  <main class="relative flex min-h-screen items-center justify-center px-4 py-8 sm:px-6 lg:px-10">
+    <div class="fade-up relative mx-auto flex w-full max-w-6xl flex-col gap-5 lg:flex-row">
+      <section class="glass-card floating-card flex-1 p-7 sm:p-9 lg:p-12" style="animation: ambient-float 8s ease-in-out infinite;">
+        <div class="mb-10 flex flex-wrap items-center gap-3">
+          <span class="rounded-full border border-cyan-300/20 bg-cyan-400/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.28em] text-cyan-200" data-text="auth.brandTag">晋中信息学院</span>
+          <span class="rounded-full border border-white/10 bg-white/5 px-4 py-1.5 text-xs text-slate-300">Campus Study Room</span>
+        </div>
 
-      <form id="loginForm" class="form active">
-        <label>
-          <span data-text="auth.accountLabel">手机号或邮箱</span>
-          <input id="loginPhone" maxlength="255" data-placeholder="auth.accountPlaceholder" />
-        </label>
-        <label>
-          <span data-text="auth.passwordLabel">密码</span>
-          <input id="loginPassword" type="password" minlength="6" data-placeholder="auth.passwordPlaceholder" />
-        </label>
-        <button type="submit" class="btn primary" data-text="auth.loginSubmit">登录并进入</button>
-      </form>
+        <div class="max-w-xl">
+          <p class="mb-3 font-display text-sm uppercase tracking-[0.42em] text-sky-300">Smart Booking Portal</p>
+          <h1 class="font-display text-4xl leading-tight text-white sm:text-5xl" data-text="auth.brandTitle">自习室预约</h1>
+          <p class="mt-5 max-w-lg text-sm leading-7 text-slate-300 sm:text-base" data-text="auth.brandDesc">
+            请先登录或注册，进入晋中信息学院自习室预约系统。
+          </p>
+        </div>
 
-      <form id="registerForm" class="form">
-        <label>
-          <span data-text="auth.nameLabel">昵称</span>
-          <input id="registerName" maxlength="50" data-placeholder="auth.namePlaceholder" />
-        </label>
-        <label>
-          <span data-text="auth.phoneLabel">手机号</span>
-          <input id="registerPhone" maxlength="20" data-placeholder="auth.phonePlaceholder" />
-        </label>
-        <label>
-          <span data-text="auth.emailLabel">邮箱（可选）</span>
-          <input id="registerEmail" maxlength="255" data-placeholder="auth.emailPlaceholder" />
-        </label>
-        <label>
-          <span data-text="auth.passwordLabel">密码</span>
-          <input id="registerPassword" type="password" minlength="6" data-placeholder="auth.passwordPlaceholder" />
-        </label>
-        <button type="submit" class="btn primary" data-text="auth.registerSubmit">注册并进入</button>
-      </form>
+        <div class="mt-10 grid gap-4 sm:grid-cols-3">
+          <article class="rounded-3xl border border-white/10 bg-white/5 p-4 transition-transform duration-500 hover:-translate-y-1">
+            <p class="text-xs uppercase tracking-[0.24em] text-slate-400">01</p>
+            <h2 class="mt-3 text-base font-semibold text-white">预约更快</h2>
+            <p class="mt-2 text-sm leading-6 text-slate-300">统一入口，按角色自动跳转，减少重复操作。</p>
+          </article>
+          <article class="rounded-3xl border border-white/10 bg-white/5 p-4 transition-transform duration-500 hover:-translate-y-1">
+            <p class="text-xs uppercase tracking-[0.24em] text-slate-400">02</p>
+            <h2 class="mt-3 text-base font-semibold text-white">状态清晰</h2>
+            <p class="mt-2 text-sm leading-6 text-slate-300">登录、注册和系统反馈集中在同一块面板里。</p>
+          </article>
+          <article class="rounded-3xl border border-white/10 bg-white/5 p-4 transition-transform duration-500 hover:-translate-y-1">
+            <p class="text-xs uppercase tracking-[0.24em] text-slate-400">03</p>
+            <h2 class="mt-3 text-base font-semibold text-white">体验更轻</h2>
+            <p class="mt-2 text-sm leading-6 text-slate-300">聚焦输入和主按钮交互，视觉层次更明确。</p>
+          </article>
+        </div>
 
-      <pre id="authOutput" class="output"></pre>
-    </section>
+        <div class="mt-10 flex flex-wrap gap-3 text-xs text-slate-300">
+          <span class="rounded-full border border-white/10 bg-white/5 px-3 py-2">实时预约</span>
+          <span class="rounded-full border border-white/10 bg-white/5 px-3 py-2">统一权限</span>
+          <span class="rounded-full border border-white/10 bg-white/5 px-3 py-2">签到联动</span>
+        </div>
+      </section>
+
+      <section class="glass-card floating-card w-full lg:max-w-[470px] p-5 sm:p-6 lg:p-8" style="animation-delay: 120ms;">
+        <div class="mb-6">
+          <p class="text-xs font-semibold uppercase tracking-[0.32em] text-slate-400">Access</p>
+          <h2 class="mt-3 text-2xl font-semibold text-white">欢迎回来</h2>
+        </div>
+
+        <div class="mb-6 flex rounded-[22px] border border-white/10 bg-white/5 p-1.5">
+          <button id="tabLogin" type="button" class="auth-tab active" data-text="auth.tabLogin" aria-selected="true">登录</button>
+          <button id="tabRegister" type="button" class="auth-tab" data-text="auth.tabRegister" aria-selected="false">注册</button>
+        </div>
+
+        <form id="loginForm" class="auth-form active" novalidate>
+          <label>
+            <span class="field-label" data-text="auth.accountLabel">手机号或邮箱</span>
+            <input id="loginPhone" class="auth-input" maxlength="255" data-placeholder="auth.accountPlaceholder" placeholder="请输入手机号或邮箱" />
+          </label>
+          <label>
+            <span class="field-label" data-text="auth.passwordLabel">密码</span>
+            <input id="loginPassword" class="auth-input" type="password" minlength="6" data-placeholder="auth.passwordPlaceholder" placeholder="请输入密码" />
+          </label>
+          <button type="submit" class="glow-btn" data-text="auth.loginSubmit">登录并进入</button>
+        </form>
+
+        <form id="registerForm" class="auth-form" novalidate hidden>
+          <label>
+            <span class="field-label" data-text="auth.nameLabel">昵称</span>
+            <input id="registerName" class="auth-input" maxlength="50" data-placeholder="auth.namePlaceholder" placeholder="请输入昵称" />
+          </label>
+          <label>
+            <span class="field-label" data-text="auth.phoneLabel">手机号</span>
+            <input id="registerPhone" class="auth-input" maxlength="20" data-placeholder="auth.phonePlaceholder" placeholder="请输入手机号" />
+          </label>
+          <label>
+            <span class="field-label" data-text="auth.emailLabel">邮箱</span>
+            <input id="registerEmail" class="auth-input" maxlength="255" data-placeholder="auth.emailPlaceholder" placeholder="请输入邮箱" />
+          </label>
+          <label>
+            <span class="field-label" data-text="auth.passwordLabel">密码</span>
+            <input id="registerPassword" class="auth-input" type="password" minlength="6" data-placeholder="auth.passwordPlaceholder" placeholder="请输入密码" />
+          </label>
+          <button type="submit" class="glow-btn" data-text="auth.registerSubmit">注册并进入</button>
+        </form>
+
+        <pre id="authOutput" class="status-panel mt-6 hidden min-h-[112px] overflow-auto"></pre>
+      </section>
+    </div>
   </main>
 
   <script src="/static/js/texts.js?v=20260318-4"></script>
-  <script src="/static/js/auth.js?v=20260318-4"></script>
+  <script src="/static/js/auth.js?v=20260401-1"></script>
 </body>
 </html>
