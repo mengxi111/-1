@@ -1,2 +1,1 @@
-﻿window.AdminModules?.initOrders();
-
+window.location.replace("/admin/dashboard");

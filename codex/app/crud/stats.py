@@ -3,6 +3,7 @@ from datetime import date, datetime, time, timedelta, timezone
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
+from app.core.config import settings
 from app.schemas.stats import CheckinStatsOut, DailyTrendItem, HotSeatItem, HourlyCheckinItem, HourlyOccupancyItem, StatsOverviewOut
 
 ORDERS_OVERVIEW_SQL = """
@@ -240,9 +241,13 @@ def get_overview_stats(db: Session, target_date: date, store_id: int | None) -> 
     occupied_today = _scalar_int(db, TODAY_OCCUPIED_SQL, params, "occupied_seats")
     current_occupied_count = _scalar_int(db, CURRENT_OCCUPIED_SQL, params, "occupied_seats")
 
-    order_row = db.execute(text(ORDERS_OVERVIEW_SQL), params).mappings().first() or {}
-    today_order_count = int(order_row.get("today_order_count") or 0)
-    today_revenue = float(order_row.get("today_revenue") or 0)
+    if settings.order_module_enabled:
+        order_row = db.execute(text(ORDERS_OVERVIEW_SQL), params).mappings().first() or {}
+        today_order_count = int(order_row.get("today_order_count") or 0)
+        today_revenue = float(order_row.get("today_revenue") or 0)
+    else:
+        today_order_count = 0
+        today_revenue = 0.0
 
     today_occupancy_rate = round((occupied_today / total_available_seats) * 100, 2) if total_available_seats > 0 else 0.0
     current_idle_seat_count = max(total_available_seats - current_occupied_count, 0)
@@ -263,7 +268,7 @@ def get_overview_stats(db: Session, target_date: date, store_id: int | None) -> 
         DailyTrendItem(
             date=str(row["day"]),
             booking_count=int(row["booking_count"] or 0),
-            revenue=float(row["revenue"] or 0),
+            revenue=float(row["revenue"] or 0) if settings.order_module_enabled else 0.0,
         )
         for row in seven_day_rows
     ]

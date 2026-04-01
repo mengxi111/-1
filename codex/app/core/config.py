@@ -21,6 +21,7 @@ class Settings(BaseSettings):
     blacklist_effective_days: int = 7
     default_store_open_time: str = "08:00"
     default_store_close_time: str = "23:00"
+    order_module_enabled: bool = False
     reminder_minutes_before_start: int = 30
     expire_job_interval_seconds: int = 300
     jwt_secret_key: str = "change-this-in-production"

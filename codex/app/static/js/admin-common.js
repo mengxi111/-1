@@ -107,17 +107,6 @@
     return `<span class="status-tag status-${cls}">${escapeHtml(text)}</span>`;
   }
 
-  function orderStatusTag(status) {
-    const mapping = {
-      pending: ["pending", window.statusText("pending")],
-      paid: ["paid", window.statusText("paid")],
-      cancelled: ["cancelled", window.statusText("cancelled")],
-      refunded: ["refunded", window.statusText("refunded")],
-    };
-    const [cls, label] = mapping[status] || ["normal", status || "-"];
-    return statusTag(label, cls);
-  }
-
   function bookingStatusTag(status) {
     const mapping = {
       booked: ["normal", window.statusText("booked")],
@@ -281,7 +270,6 @@
     setSuccess,
     setError,
     statusTag,
-    orderStatusTag,
     bookingStatusTag,
     noticeStatusTag,
     userStatusText,

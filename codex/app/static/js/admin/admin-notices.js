@@ -56,8 +56,8 @@
 
   function resetForm() {
     state.editingNoticeId = null;
-    el.noticeEditorTitle.textContent = "新增公告";
-    el.noticeEditorMode.textContent = "未选择公告时默认新建";
+    el.noticeEditorTitle.textContent = "新建公告";
+    el.noticeEditorMode.textContent = "未选择公告时默认为新建";
     el.noticeStoreId.value = "";
     el.noticeTitleInput.value = "";
     el.noticeStatusSelect.value = "draft";
@@ -137,7 +137,7 @@
   function fillFormByNotice(notice) {
     state.editingNoticeId = notice.id;
     el.noticeEditorTitle.textContent = "编辑公告";
-    el.noticeEditorMode.textContent = `当前编辑：公告 #${notice.id}`;
+    el.noticeEditorMode.textContent = `当前编辑：公告#${notice.id}`;
     el.noticeStoreId.value = notice.store_id ? String(notice.store_id) : "";
     el.noticeTitleInput.value = notice.title || "";
     el.noticeStatusSelect.value = notice.status || "draft";

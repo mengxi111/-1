@@ -43,6 +43,7 @@ from app.crud.student_notification import queue_notice_notifications_for_student
 from app.crud.system_setting import get_system_config, reset_settings_to_defaults, upsert_settings
 from app.crud.user import DELETED_USER_STATUS, create_user, delete_user, get_user, list_users, update_user
 from app.core.api_response import success_response, error_response
+from app.core.config import settings
 from app.db.session import get_db
 from app.deps import (
     CurrentAuthUser,
@@ -107,6 +108,11 @@ from app.schemas.user import UserCreate, UserOut, UserUpdate
 router = APIRouter(dependencies=[Depends(require_admin_portal_token_user)])
 
 LOG_DURATION_RE = re.compile(r"耗时=(\d+)ms")
+
+
+def _ensure_order_module_enabled() -> None:
+    if not settings.order_module_enabled:
+        raise error_response(status.HTTP_404_NOT_FOUND, "订单/支付模块已关闭")
 
 
 def _serialize_operation_log(item) -> OperationLogOut:
@@ -357,7 +363,7 @@ def admin_create_booking_api(
     except BookingStateError as exc:
         raise error_response(status.HTTP_400_BAD_REQUEST, str(exc)) from exc
 
-    if get_order_by_booking_id(db, booking.id) is None:
+    if settings.order_module_enabled and get_order_by_booking_id(db, booking.id) is None:
         try:
             create_order(db, booking_id=booking.id, user_id=booking.user_id, amount=0, status="pending")
         except IntegrityError:
@@ -1101,6 +1107,7 @@ def admin_list_orders(
     limit: int = 100,
     db: Session = Depends(get_db),
 ) -> OrderPageOut:
+    _ensure_order_module_enabled()
     if date_from and date_to and date_from > date_to:
         raise error_response(status.HTTP_400_BAD_REQUEST, "开始时间不能晚于结束时间")
     total, items = list_orders(
@@ -1122,6 +1129,7 @@ def admin_get_order_detail(
     db: Session = Depends(get_db),
     _admin: CurrentAuthUser = Depends(require_admin_portal_token_user),
 ) -> OrderOut:
+    _ensure_order_module_enabled()
     item = get_order_detail(db, order_id)
     if item is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="订单不存在")
@@ -1138,6 +1146,7 @@ def admin_export_orders_csv(
     db: Session = Depends(get_db),
     _admin: CurrentAuthUser = Depends(require_admin_token_user),
 ) -> Response:
+    _ensure_order_module_enabled()
     if date_from and date_to and date_from > date_to:
         raise error_response(status.HTTP_400_BAD_REQUEST, "开始时间不能晚于结束时间")
 
@@ -1187,6 +1196,7 @@ def admin_cancel_order(
     db: Session = Depends(get_db),
     _admin: CurrentAuthUser = Depends(require_admin_token_user),
 ) -> OrderActionOut:
+    _ensure_order_module_enabled()
     order = get_order(db, order_id)
     if order is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="订单不存在")
@@ -1204,6 +1214,7 @@ def admin_mark_order_paid(
     db: Session = Depends(get_db),
     _admin: CurrentAuthUser = Depends(require_admin_token_user),
 ) -> OrderActionOut:
+    _ensure_order_module_enabled()
     order = get_order(db, order_id)
     if order is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="订单不存在")
@@ -1221,6 +1232,7 @@ def admin_refund_order(
     db: Session = Depends(get_db),
     _admin: CurrentAuthUser = Depends(require_admin_token_user),
 ) -> OrderActionOut:
+    _ensure_order_module_enabled()
     order = get_order(db, order_id)
     if order is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="订单不存在")

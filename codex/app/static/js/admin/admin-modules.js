@@ -69,16 +69,12 @@
     }
     chart.setOption({
       tooltip: { trigger: "axis" },
-      legend: { data: ["预约数", "收入"] },
-      grid: { left: 42, right: 42, top: 46, bottom: 28 },
+      legend: { data: ["预约数"] },
+      grid: { left: 42, right: 24, top: 46, bottom: 28 },
       xAxis: { type: "category", data: list.map((item) => item.date?.slice(5) || item.date || "-") },
-      yAxis: [
-        { type: "value", name: "预约数", minInterval: 1 },
-        { type: "value", name: "收入", min: 0 },
-      ],
+      yAxis: { type: "value", name: "预约数", minInterval: 1 },
       series: [
-        { name: "预约数", type: "line", smooth: true, yAxisIndex: 0, data: list.map((item) => Number(item.booking_count || 0)), lineStyle: { width: 3, color: "#2563eb" }, itemStyle: { color: "#2563eb" } },
-        { name: "收入", type: "bar", yAxisIndex: 1, data: list.map((item) => Number(item.revenue || 0)), itemStyle: { color: "#16a34a" } },
+        { name: "预约数", type: "line", smooth: true, data: list.map((item) => Number(item.booking_count || 0)), lineStyle: { width: 3, color: "#2563eb" }, itemStyle: { color: "#2563eb" } },
       ],
     }, true);
   }
@@ -131,7 +127,6 @@
     }
     if (key === "status") {
       if (["draft", "published", "offline"].includes(String(value))) return C.noticeStatusTag(String(value));
-      if (["pending", "paid", "cancelled", "refunded"].includes(String(value))) return C.orderStatusTag(String(value));
       return C.bookingStatusTag(String(value));
     }
     if (key === "seat_type") return C.escapeHtml(window.seatTypeText ? window.seatTypeText(value) : String(value));
@@ -164,7 +159,6 @@
       loadCheckinStatsBtn: document.getElementById("loadCheckinStatsBtn"),
       metricBookingCount: document.getElementById("metricBookingCount"),
       metricCheckinCount: document.getElementById("metricCheckinCount"),
-      metricRevenue: document.getElementById("metricRevenue"),
       metricOccupancyRate: document.getElementById("metricOccupancyRate"),
       metricNoShowCount: document.getElementById("metricNoShowCount"),
       metricIdleSeatCount: document.getElementById("metricIdleSeatCount"),
@@ -189,7 +183,6 @@
     function resetOverview() {
       el.metricBookingCount.textContent = "0";
       el.metricCheckinCount.textContent = "0";
-      el.metricRevenue.textContent = C.fmtMoney(0);
       el.metricOccupancyRate.textContent = "0.00%";
       el.metricNoShowCount.textContent = "0";
       el.metricIdleSeatCount.textContent = "0";
@@ -218,7 +211,6 @@
         ]);
         el.metricBookingCount.textContent = String(Number(stats?.today_booking_count || 0));
         el.metricCheckinCount.textContent = String(Number(stats?.today_checkin_count || 0));
-        el.metricRevenue.textContent = C.fmtMoney(stats?.today_revenue || 0);
         el.metricOccupancyRate.textContent = `${Number(stats?.current_occupancy_rate || 0).toFixed(2)}%`;
         el.metricNoShowCount.textContent = String(Number(stats?.today_no_show_count || 0));
         el.metricIdleSeatCount.textContent = String(Number(stats?.current_idle_seat_count || 0));
@@ -633,181 +625,7 @@
   }
 
   function initOrders() {
-    if (!C.initPage()) return;
-
-    const el = {
-      orderStatusSelect: document.getElementById("orderStatusSelect"),
-      orderStoreIdSelect: document.getElementById("orderStoreIdSelect"),
-      orderKeywordInput: document.getElementById("orderKeywordInput"),
-      orderDateFromInput: document.getElementById("orderDateFromInput"),
-      orderDateToInput: document.getElementById("orderDateToInput"),
-      loadOrdersBtn: document.getElementById("loadOrdersBtn"),
-      exportOrdersBtn: document.getElementById("exportOrdersBtn"),
-      searchOrdersBtn: document.getElementById("searchOrdersBtn"),
-      resetOrdersBtn: document.getElementById("resetOrdersBtn"),
-      orderListMeta: document.getElementById("orderListMeta"),
-      orderTbody: document.getElementById("orderTbody"),
-      orderDetailBox: document.getElementById("orderDetailBox"),
-    };
-
-    function selectedOrderStoreId() {
-      return C.selectedStoreId(el.orderStoreIdSelect);
-    }
-
-    function orderQuery() {
-      const query = new URLSearchParams();
-      if (selectedOrderStoreId()) query.set("store_id", String(selectedOrderStoreId()));
-      if (el.orderStatusSelect.value) query.set("status", el.orderStatusSelect.value);
-      if (el.orderKeywordInput.value.trim()) query.set("keyword", el.orderKeywordInput.value.trim());
-      const from = C.toIso(el.orderDateFromInput.value);
-      const to = C.toIso(el.orderDateToInput.value);
-      if (from) query.set("date_from", from);
-      if (to) query.set("date_to", to);
-      return query.toString();
-    }
-
-    function renderOrderDetail(item) {
-      if (!item) {
-        el.orderDetailBox.className = "detail-box empty";
-        el.orderDetailBox.textContent = "点击“查看详情”查看订单信息";
-        return;
-      }
-      el.orderDetailBox.className = "detail-box";
-      el.orderDetailBox.innerHTML = `
-        <h3>订单详情</h3>
-        <dl class="dialog-grid">
-          <div><span>订单编号</span><strong>${C.escapeHtml(item.id)}</strong></div>
-          <div><span>预约编号</span><strong>${C.escapeHtml(item.booking_id)}</strong></div>
-          <div><span>门店</span><strong>${C.escapeHtml(item.store_name || "-")}</strong></div>
-          <div><span>座位</span><strong>${C.escapeHtml(item.seat_no || "-")}</strong></div>
-          <div><span>用户</span><strong>${C.escapeHtml(item.user_name || item.user_id)}</strong></div>
-          <div><span>手机号</span><strong>${C.escapeHtml(item.user_phone || "-")}</strong></div>
-          <div><span>金额</span><strong>${C.escapeHtml(C.fmtMoney(item.amount || 0))}</strong></div>
-          <div><span>订单状态</span><strong>${C.orderStatusTag(item.status)}</strong></div>
-          <div><span>开始时间</span><strong>${C.escapeHtml(C.fmtDate(item.start_time))}</strong></div>
-          <div><span>结束时间</span><strong>${C.escapeHtml(C.fmtDate(item.end_time))}</strong></div>
-          <div><span>创建时间</span><strong>${C.escapeHtml(C.fmtDate(item.created_at))}</strong></div>
-          <div><span>预约状态</span><strong>${C.bookingStatusTag(item.booking_status)}</strong></div>
-        </dl>`;
-    }
-
-    function renderOrders(items, total) {
-      const rows = Array.isArray(items) ? items : [];
-      el.orderListMeta.textContent = `当前共 ${total ?? rows.length} 条订单`;
-      if (!rows.length) {
-        el.orderTbody.innerHTML = '<tr><td colspan="8">暂无订单数据</td></tr>';
-        renderOrderDetail(null);
-        return;
-      }
-      el.orderTbody.innerHTML = rows.map((item) => {
-        const actions = [`<button class="btn btn-inline" data-action="detail" data-id="${item.id}">查看详情</button>`];
-        if (item.status === "pending") {
-          actions.push(`<button class="btn btn-inline" data-action="paid" data-id="${item.id}">标记已支付</button>`);
-          actions.push(`<button class="btn btn-inline" data-action="cancel" data-id="${item.id}">取消订单</button>`);
-        }
-        if (item.status === "paid") actions.push(`<button class="btn btn-inline" data-action="refund" data-id="${item.id}">标记已退款</button>`);
-        return `<tr>
-          <td>${item.id}</td>
-          <td>${C.escapeHtml(item.store_name || "-")}</td>
-          <td>${C.escapeHtml(item.seat_no || "-")}</td>
-          <td>${C.escapeHtml(item.user_name || item.user_id)}</td>
-          <td>${C.escapeHtml(C.fmtMoney(item.amount || 0))}</td>
-          <td>${C.orderStatusTag(item.status)}</td>
-          <td>${C.escapeHtml(C.fmtDate(item.created_at))}</td>
-          <td>${actions.join("")}</td>
-        </tr>`;
-      }).join("");
-    }
-
-    async function loadOrders() {
-      const query = orderQuery();
-      const data = await C.request(`/orders${query ? `?${query}` : ""}`);
-      const items = Array.isArray(data?.items) ? data.items : [];
-      renderOrders(items, Number(data?.total || 0));
-    }
-
-    async function showOrderDetail(orderId) {
-      const detail = await C.request(`/orders/${orderId}`);
-      renderOrderDetail(detail);
-    }
-
-    async function doOrderAction(orderId, action) {
-      const actionMap = {
-        cancel: { path: `/orders/${orderId}/cancel`, confirm: "确认取消该订单吗？", label: "取消订单" },
-        paid: { path: `/orders/${orderId}/paid`, confirm: "确认将该订单标记为已支付吗？", label: "标记已支付" },
-        refund: { path: `/orders/${orderId}/refund`, confirm: "确认将该订单标记为已退款吗？", label: "标记已退款" },
-      };
-      const config = actionMap[action];
-      if (!config) return;
-      if (!window.confirm(config.confirm)) return;
-      await C.request(config.path, { method: "POST" });
-      await loadOrders();
-      await showOrderDetail(orderId);
-      C.setSuccess(`订单${config.label}成功`);
-    }
-
-    async function exportOrders() {
-      const query = orderQuery();
-      let response;
-      try {
-        response = await fetch(`/api/admin/orders/export${query ? `?${query}` : ""}`, {
-          headers: { Authorization: `Bearer ${window.getToken()}` },
-        });
-      } catch {
-        throw new Error("网络连接失败，请检查后重试");
-      }
-      if (!response.ok) {
-        const text = await response.text();
-        let message = "订单数据加载失败，请稍后重试";
-        try {
-          const payload = text ? JSON.parse(text) : null;
-          message = payload?.message || payload?.detail || message;
-        } catch {}
-        throw new Error(message);
-      }
-      const blob = await response.blob();
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = `orders_${Date.now()}.csv`;
-      document.body.append(link);
-      link.click();
-      link.remove();
-      URL.revokeObjectURL(url);
-      C.setSuccess("订单导出成功");
-    }
-
-    (async () => {
-      await C.loadStores(true);
-      C.fillStoreSelect(el.orderStoreIdSelect, C.state.stores || [], { includeAll: true, allLabel: "全部门店" });
-      el.loadOrdersBtn?.addEventListener("click", () => loadOrders().catch(C.setError));
-      el.searchOrdersBtn?.addEventListener("click", () => loadOrders().catch(C.setError));
-      el.resetOrdersBtn?.addEventListener("click", () => {
-        el.orderStatusSelect.value = "";
-        el.orderStoreIdSelect.value = "";
-        el.orderKeywordInput.value = "";
-        el.orderDateFromInput.value = "";
-        el.orderDateToInput.value = "";
-        loadOrders().catch(C.setError);
-      });
-      el.exportOrdersBtn?.addEventListener("click", () => exportOrders().catch(C.setError));
-      el.orderTbody?.addEventListener("click", async (event) => {
-        const target = event.target;
-        if (!(target instanceof HTMLElement)) return;
-        const button = target.closest("button[data-action]");
-        if (!button) return;
-        const orderId = Number(button.dataset.id || 0);
-        const action = button.dataset.action;
-        if (!orderId || !action) return;
-        try {
-          if (action === "detail") await showOrderDetail(orderId);
-          else await doOrderAction(orderId, action);
-        } catch (error) {
-          C.setError(error);
-        }
-      });
-      await loadOrders();
-    })().catch(C.setError);
+    window.location.replace("/admin/dashboard");
   }
 
   function initUsers() {

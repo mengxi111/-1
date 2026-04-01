@@ -1,7 +1,9 @@
 from pathlib import Path
 
 from fastapi import APIRouter
-from fastapi.responses import FileResponse, RedirectResponse
+from fastapi.responses import FileResponse, RedirectResponse, Response
+
+from app.core.config import settings
 
 router = APIRouter(include_in_schema=False)
 
@@ -93,7 +95,9 @@ def admin_resources_ui() -> FileResponse:
 
 
 @router.get("/admin/orders")
-def admin_orders_ui() -> FileResponse:
+def admin_orders_ui() -> Response:
+    if not settings.order_module_enabled:
+        return RedirectResponse(url="/admin/dashboard", status_code=307)
     return _admin_page("orders")
 
 

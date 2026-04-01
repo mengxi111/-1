@@ -5,6 +5,7 @@ from decimal import Decimal
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
+from app.core.config import settings
 from app.core.security import hash_password
 from app.crud.student_notification import queue_student_notification
 from app.models.booking import Booking
@@ -585,14 +586,15 @@ def _seed_dashboard_bookings(
         )
         booking_created_count += 1 if booking_created else 0
 
-        order_created = _upsert_order(
-            db,
-            booking=booking,
-            amount=_booking_amount(scenario["status"], scenario["amount"]),
-            status=_booking_order_status(scenario["status"]),
-            created_at=scenario["start_time"] - timedelta(minutes=25),
-        )
-        order_created_count += 1 if order_created else 0
+        if settings.order_module_enabled:
+            order_created = _upsert_order(
+                db,
+                booking=booking,
+                amount=_booking_amount(scenario["status"], scenario["amount"]),
+                status=_booking_order_status(scenario["status"]),
+                created_at=scenario["start_time"] - timedelta(minutes=25),
+            )
+            order_created_count += 1 if order_created else 0
 
         _upsert_checkin_record(db, booking=booking)
         _upsert_release_log(db, booking=booking)

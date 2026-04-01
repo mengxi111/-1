@@ -276,7 +276,7 @@ def student_create_booking(
         logger.warning("student_create_booking state_error user_id=%s error=%s", current_user.id, exc)
         raise error_response(status.HTTP_400_BAD_REQUEST, str(exc)) from exc
 
-    if get_order_by_booking_id(db, booking.id) is None:
+    if settings.order_module_enabled and get_order_by_booking_id(db, booking.id) is None:
         try:
             create_order(db, booking_id=booking.id, user_id=current_user.id, amount=0, status="pending")
         except IntegrityError:
