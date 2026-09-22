@@ -1,8 +1,11 @@
+from pydantic import model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
     app_name: str = "自习室管理系统"
+    environment: str = "development"
+    auto_seed_demo: bool = True
     api_v1_prefix: str = "/api/v1"
     database_url: str = "postgresql+psycopg://postgres:postgres@localhost:5432/study_room"
     timezone: str = "Asia/Shanghai"
@@ -40,6 +43,16 @@ class Settings(BaseSettings):
     smtp_from_name: str = "自习室管理系统"
     email_send_batch_size: int = 50
     email_job_interval_seconds: int = 60
+
+    @model_validator(mode="after")
+    def validate_production_security(self) -> "Settings":
+        if self.environment.lower() != "production":
+            return self
+        if self.auto_seed_demo:
+            raise ValueError("生产环境必须设置 AUTO_SEED_DEMO=false")
+        if self.jwt_secret_key == "change-this-in-production" or len(self.jwt_secret_key) < 32:
+            raise ValueError("生产环境必须配置至少 32 位的 JWT_SECRET_KEY")
+        return self
 
     model_config = SettingsConfigDict(
         env_file=".env",

@@ -1,2 +1,17 @@
 __pycache__/
 *.py[cod]
+.env
+.venv/
+*.log
+*.sqlite3
+data/postgres/
+data/redis/
+uvicorn.out.log
+uvicorn.err.log
+uvicorn8001.out.log
+uvicorn8001.err.log
+temp_utf8_test.txt
+.pytest_cache/
+.mypy_cache/
+dist/
+build/

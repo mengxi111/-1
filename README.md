@@ -3,6 +3,16 @@
 ## 项目简介
 本项目是一个面向学生与门店运营人员的自习室管理系统，后端采用 FastAPI，前端为项目内置中文静态页面。系统支持登录鉴权、预约、签到、过期释放、黑名单、通知、公告、统计与管理后台运营功能，适合课程设计/毕业设计演示。
 
+## 运行效果
+
+![自习室预约系统登录页](docs/screenshots/login.png)
+
+## 架构概览
+
+系统以 FastAPI 为统一入口，通过 JWT 与 RBAC 隔离学生端和管理端；预约写入同时使用 Redis 分布式锁与 PostgreSQL 排他约束，APScheduler 负责超时释放、自动完成和通知任务。
+
+详细架构、并发预约时序和预约状态机见 [`docs/architecture.md`](docs/architecture.md)。
+
 ## 技术栈
 - 后端：`FastAPI`、`SQLAlchemy 2.0`、`Alembic`
 - 数据库：`PostgreSQL`
@@ -81,6 +91,16 @@ scripts/               # 一键启动、种子数据
 - PostgreSQL 14+
 - Redis 6+
 - Windows PowerShell 或 Linux shell
+
+## 工程检查
+
+```powershell
+python -m pip install -r requirements-dev.txt
+python -m compileall -q app alembic scripts
+python -m pytest -q
+```
+
+生产部署必须设置 `ENVIRONMENT=production`、`AUTO_SEED_DEMO=false`，并提供至少 32 位的随机 `JWT_SECRET_KEY`；否则应用会拒绝启动。
 
 ## 一键启动（PowerShell）
 ```powershell

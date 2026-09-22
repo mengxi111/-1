@@ -1,7 +1,9 @@
 from __future__ import annotations
 
+import json
 import logging
 from time import perf_counter
+from urllib.parse import parse_qsl, urlencode
 
 from fastapi import Request
 from starlette.middleware.base import BaseHTTPMiddleware
@@ -15,6 +17,43 @@ logger = logging.getLogger(__name__)
 
 ADMIN_API_PREFIX = "/api/admin"
 CONTENT_MAX_LEN = 2000
+SENSITIVE_FIELD_FRAGMENTS = {"password", "token", "secret", "api_key", "authorization"}
+
+
+def _is_sensitive_field(key: str) -> bool:
+    normalized = key.strip().lower()
+    return any(fragment in normalized for fragment in SENSITIVE_FIELD_FRAGMENTS)
+
+
+def _redact_sensitive_values(value):
+    if isinstance(value, dict):
+        return {
+            key: "***" if _is_sensitive_field(key) else _redact_sensitive_values(item)
+            for key, item in value.items()
+        }
+    if isinstance(value, list):
+        return [_redact_sensitive_values(item) for item in value]
+    return value
+
+
+def _safe_body_preview(body_raw: bytes) -> str:
+    if not body_raw:
+        return ""
+    try:
+        payload = json.loads(body_raw)
+    except (json.JSONDecodeError, UnicodeDecodeError):
+        return "<非 JSON 请求体已省略>"
+    return json.dumps(_redact_sensitive_values(payload), ensure_ascii=False, separators=(",", ":"))
+
+
+def _safe_query_preview(query: str) -> str:
+    if not query:
+        return ""
+    pairs = [
+        (key, "***" if _is_sensitive_field(key) else value)
+        for key, value in parse_qsl(query, keep_blank_values=True)
+    ]
+    return urlencode(pairs)
 
 
 
@@ -72,12 +111,11 @@ class AdminOperationLogMiddleware(BaseHTTPMiddleware):
         if method in {"POST", "PUT", "PATCH", "DELETE"}:
             try:
                 body_raw = await request.body()
-                if body_raw:
-                    body_preview = body_raw.decode("utf-8", errors="ignore")
+                body_preview = _safe_body_preview(body_raw)
             except Exception:
                 body_preview = ""
 
-        query_text = request.url.query
+        query_text = _safe_query_preview(request.url.query)
         start = perf_counter()
         status_code = 500
         response = None
